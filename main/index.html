@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Gerador de Dietas Otimizado</title>
+	<style>
+		body {
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			margin: 0;
+			padding: 0;
+			background-color: #9cd388;
+			color: #333;
+			line-height: 1.6;
+		}
+
+		.container {
+			max-width: 800px;
+			margin: 30px auto;
+			padding: 20px;
+			background-color: #32a110;
+			border-radius: 8px;
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+		}
+
+		header {
+			background-color: #4CAF50; /* Verde mais vibrante */
+			color: white;
+            border: 1px solid white;
+			padding: 1.5em 1em; /* Mais padding */
+			text-align: center;
+			margin-bottom: 30px;
+			border-radius: 8px 8px 0 0; /* Arredondar cantos superiores */
+		}
+
+		header h1 {
+			margin: 0;
+			font-size: 2em;
+		}
+
+		header p {
+			margin: 5px 0 0;
+			font-size: 1.1em;
+		}
+
+		main {
+			padding: 10px; /* Reduzido, pois o container já tem padding */
+		}
+
+		section {
+			margin-bottom: 30px;
+			padding: 20px;
+			background-color: #f9f9f9;
+			border-radius: 8px;
+			border: 1px solid #e0e0e0;
+		}
+
+		h2 {
+			color: #4CAF50;
+			margin-top: 0;
+			border-bottom: 2px solid #4CAF50;
+			padding-bottom: 10px;
+			margin-bottom: 20px;
+		}
+
+		.form-group {
+			margin-bottom: 20px; /* Mais espaçamento */
+		}
+
+		.form-group label {
+			display: block;
+			margin-bottom: 8px; /* Mais espaçamento */
+			font-weight: bold;
+			color: #555;
+		}
+
+		.form-group input[type="number"] {
+			width: 100%;
+			padding: 12px; /* Mais padding */
+			border: 1px solid #ccc;
+			border-radius: 4px;
+			box-sizing: border-box;
+			font-size: 1em;
+		}
+
+		.form-group input[type="number"]:focus {
+			border-color: #4CAF50;
+			box-shadow: 0 0 0 0.2rem rgba(76, 175, 80, 0.25);
+			outline: none;
+		}
+
+		button {
+			background-color: #4CAF50;
+			color: white;
+			padding: 12px 20px; /* Mais padding */
+			border: none;
+			border-radius: 4px;
+			cursor: pointer;
+			font-size: 1.1em; /* Fonte maior */
+			transition: background-color 0.3s ease;
+			display: block; /* Faz o botão ocupar a largura */
+			width: 100%; /* Botão com largura total */
+			margin-top: 10px;
+		}
+
+		button:hover {
+			background-color: #45a049; /* Tom mais escuro no hover */
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			margin-top: 20px;
+		}
+
+		th, td {
+			border: 1px solid #ddd;
+			padding: 12px; /* Mais padding */
+			text-align: left;
+		}
+
+		th {
+			background-color: #e9e9e9; /* Fundo do header da tabela mais suave */
+			color: #333;
+			font-weight: bold;
+		}
+
+		td[contenteditable="true"] {
+			background-color: #fffacd; /* Amarelo claro para células editáveis */
+			cursor: text;
+		}
+
+		td[contenteditable="true"]:focus {
+			background-color: #fff;
+			outline: 2px solid #4CAF50;
+		}
+
+		#resumo-dieta {
+			margin-top: 30px;
+			padding: 20px;
+			background-color: #e6ffed; /* Fundo verde claro para o resumo */
+			border: 1px solid #c3e6cb; /* Borda verde */
+			border-radius: 8px;
+		}
+
+		#resumo-dieta h3 {
+			color: #155724; /* Verde escuro para o título do resumo */
+			margin-top: 0;
+		}
+
+		#resumo-dieta p {
+			margin-bottom: 10px;
+			color: #333;
+		}
+
+		#resumo-dieta span {
+			font-weight: bold;
+			color: #007bff; /* Azul para os valores */
+		}
+
+		/* Responsividade simples */
+		@media (max-width: 600px) {
+			.container {
+				margin: 10px;
+				padding: 15px;
+			}
+
+			header h1 {
+				font-size: 1.5em;
+			}
+
+			button {
+				font-size: 1em;
+				padding: 10px 15px;
+			}
+
+			th, td {
+				padding: 8px;
+			}
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<header>
+			<h1>Gerador de Dietas Otimizado</h1>
+			<p>Defina suas metas e o sistema ajustará as porções!</p>
+		</header>
+		<main>
+			<section id="definicao-metas">
+				<h2>Definir Metas Diárias</h2>
+				<div class="form-group">
+					<label for="calorias">Calorias Totais (kcal):</label>
+					<input type="number" id="calorias" name="calorias" value="2000" min="0">
+				</div>
+				<div class="form-group">
+					<label for="proteina-percent">% de Proteína (ex: 30 para 30%):</label>
+					<input type="number" id="proteina-percent" name="proteina-percent" value="30" min="0" max="100">
+				</div>
+				<div class="form-group">
+					<label for="carboidrato-percent">% de Carboidrato (ex: 40 para 40%):</label>
+					<input type="number" id="carboidrato-percent" name="carboidrato-percent" value="40" min="0" max="100">
+				</div>
+				<div class="form-group">
+					<label for="gordura-percent">% de Gordura (ex: 30 para 30%):</label>
+					<input type="number" id="gordura-percent" name="gordura-percent" value="30" min="0" max="100">
+				</div>
+				<button onclick="gerarPlano()">Gerar Plano Alimentar</button>
+			</section>
+
+			<section id="plano-dieta" style="display: none;">
+				<h2>Plano Alimentar Sugerido</h2>
+				<table>
+					<thead>
+						<tr>
+							<th>Alimento</th>
+							<th>Porção (g)</th>
+							<th>Proteína (g)</th>
+							<th>Carboidrato (g)</th>
+							<th>Gordura (g)</th>
+						</tr>
+					</thead>
+					<tbody id="tabela-alimentos">
+						<!-- Exemplo de como seria uma linha (será gerada dinamicamente):
+						<tr data-alimento-id="frango">
+							<td>Peito de Frango</td>
+							<td contenteditable="true" class="porcao">0</td>
+							<td class="macro-proteina">0</td>
+							<td class="macro-carboidrato">0</td>
+							<td class="macro-gordura">0</td>
+						</tr>
+						-->
+					</tbody>
+				</table>
+				<div id="resumo-dieta">
+					<h3>Resumo Nutricional</h3>
+					<p><strong>Metas Diárias:</strong> Proteína: <span id="meta-proteina">0</span>g, Carboidrato: <span id="meta-carboidrato">0</span>g, Gordura: <span id="meta-gordura">0</span>g</p>
+					<p><strong>Totais do Plano:</strong> Proteína: <span id="total-proteina">0</span>g, Carboidrato: <span id="total-carboidrato">0</span>g, Gordura: <span id="total-gordura">0</span>g</p>
+					<p><strong>Calorias Totais do Plano:</strong> <span id="total-calorias-plano">0</span> kcal</p>
+				</div>
+			</section>
+		</main>
+	</div>
+
+	<script>
+		// --- BANCO DE DADOS DE ALIMENTOS ---
+		// Informações nutricionais por 100g de alimento.
+		// Adicione ou modifique alimentos conforme necessário.
+		const alimentosDB = {
+			frango: { nome: 'Peito de Frango Cozido', proteina: 31, carboidrato: 0, gordura: 3.6, ehProteinaPrimaria: true },
+			salmao: { nome: 'Salmão Grelhado', proteina: 25, carboidrato: 0, gordura: 15, ehProteinaPrimaria: true },
+			ovo:    { nome: 'Ovo Cozido (unid. ~50g)', proteina: 6.5, carboidrato: 0.5, gordura: 5, porUnidade: true, pesoUnidade: 50}, // Exemplo por unidade
+			arroz:  { nome: 'Arroz Branco Cozido', proteina: 2.7, carboidrato: 28, gordura: 0.3, ehCarboidratoPrimario: true },
+			batata_doce: { nome: 'Batata Doce Cozida', proteina: 1.6, carboidrato: 20, gordura: 0.1, ehCarboidratoPrimario: true },
+			brocolis: { nome: 'Brócolis Cozido', proteina: 2.8, carboidrato: 7, gordura: 0.4 },
+			azeite: { nome: 'Azeite de Oliva Extra Virgem', proteina: 0, carboidrato: 0, gordura: 100, ehGorduraPrimaria: true },
+			abacate: { nome: 'Abacate', proteina: 2, carboidrato: 9, gordura: 15, ehGorduraPrimaria: true },
+			amendoas: { nome: 'Amêndoas (porção)', proteina: 6, carboidrato: 6, gordura: 14 } // Exemplo de porção típica, não por 100g
+		};
+
+		// Alimentos chave para o ajuste automático. O sistema tentará usar estes prioritariamente.
+		const alimentosChave = {
+			proteina: 'frango',    // ID do alimentoDB que será o principal para proteína
+			carboidrato: 'arroz', // ID do alimentoDB que será o principal para carboidrato
+			gordura: 'azeite'    // ID do alimentoDB que será o principal para gordura
+		};
+
+		// --- ELEMENTOS DO DOM (Interface do Usuário) ---
+		// Inputs para o usuário definir as metas
+		const inputCalorias = document.getElementById('calorias');
+		const inputProteinaPercent = document.getElementById('proteina-percent');
+		const inputCarboidratoPercent = document.getElementById('carboidrato-percent');
+		const inputGorduraPercent = document.getElementById('gordura-percent');
+
+		// Tabela onde os alimentos e suas porções serão exibidos
+		const tabelaAlimentosBody = document.getElementById('tabela-alimentos');
+
+		// Spans para exibir as metas calculadas
+		const spanMetaProteina = document.getElementById('meta-proteina');
+		const spanMetaCarboidrato = document.getElementById('meta-carboidrato');
+		const spanMetaGordura = document.getElementById('meta-gordura');
+
+		// Spans para exibir os totais da dieta calculados a partir das porções
+		const spanTotalProteina = document.getElementById('total-proteina');
+		const spanTotalCarboidrato = document.getElementById('total-carboidrato');
+		const spanTotalGordura = document.getElementById('total-gordura');
+		const spanTotalCaloriasPlano = document.getElementById('total-calorias-plano');
+
+		// Seção do plano de dieta, inicialmente oculta
+		const secaoPlanoDieta = document.getElementById('plano-dieta');
+
+		// --- FUNÇÕES AUXILIARES ---
+
+		/**
+		 * Popula a tabela de alimentos no HTML com base no alimentosDB.
+		 * Cria as linhas e células para cada alimento.
+		 */
+		function popularTabelaAlimentosInicial() {
+			tabelaAlimentosBody.innerHTML = ''; // Limpa a tabela antes de popular
+
+			for (const idAlimento in alimentosDB) {
+				if (alimentosDB.hasOwnProperty(idAlimento)) {
+					const alimento = alimentosDB[idAlimento];
+					const linha = tabelaAlimentosBody.insertRow();
+					linha.dataset.alimentoId = idAlimento; // Guarda o ID do alimento na linha para fácil acesso
+
+					// Célula do Nome do Alimento
+					const celulaNome = linha.insertCell();
+					celulaNome.textContent = alimento.nome;
+
+					// Célula da Porção (editável)
+					const celulaPorcao = linha.insertCell();
+					celulaPorcao.contentEditable = true; // Permite edição direta pelo usuário
+					celulaPorcao.classList.add('porcao');
+					celulaPorcao.textContent = "0"; // Porção inicial
+					// Adiciona um listener para recalcular quando a porção é editada manualmente
+					celulaPorcao.addEventListener('input', () => {
+						// Garante que apenas números sejam inseridos e recalcula
+						if (isNaN(parseFloat(celulaPorcao.textContent))) {
+							celulaPorcao.textContent = "0";
+						}
+						atualizarPlanoCompleto();
+					});
+
+
+					// Células para os Macronutrientes (serão preenchidas pelos cálculos)
+					linha.insertCell().classList.add('macro-proteina');
+					linha.insertCell().classList.add('macro-carboidrato');
+					linha.insertCell().classList.add('macro-gordura');
+				}
+			}
+		}
+
+
+		/**
+		 * Calcula as metas de macronutrientes em gramas com base nas entradas do usuário.
+		 * @returns {object} Um objeto com as metas: { proteinaG, carboidratoG, gorduraG, caloriasTotais }
+		 */
+		function calcularMetasMacros() {
+			const caloriasTotais = parseFloat(inputCalorias.value) || 0;
+			const proteinaPercent = (parseFloat(inputProteinaPercent.value) || 0) / 100;
+			const carboidratoPercent = (parseFloat(inputCarboidratoPercent.value) || 0) / 100;
+			const gorduraPercent = (parseFloat(inputGorduraPercent.value) || 0) / 100;
+
+			// Validação básica das porcentagens
+			if ((proteinaPercent + carboidratoPercent + gorduraPercent) > 1.05 || (proteinaPercent + carboidratoPercent + gorduraPercent) < 0.95 && (proteinaPercent + carboidratoPercent + gorduraPercent !==0) ) {
+				alert("A soma das porcentagens de proteína, carboidrato e gordura deve ser próxima de 100%. Por favor, ajuste os valores.");
+				return null; // Retorna nulo se a validação falhar
+			}
+
+
+			// 1g de proteína = 4 kcal
+			// 1g de carboidrato = 4 kcal
+			// 1g de gordura = 9 kcal
+			const proteinaG = (caloriasTotais * proteinaPercent) / 4;
+			const carboidratoG = (caloriasTotais * carboidratoPercent) / 4;
+			const gorduraG = (caloriasTotais * gorduraPercent) / 9;
+
+			// Atualiza os spans na interface que mostram as metas
+			spanMetaProteina.textContent = proteinaG.toFixed(1);
+			spanMetaCarboidrato.textContent = carboidratoG.toFixed(1);
+			spanMetaGordura.textContent = gorduraG.toFixed(1);
+
+			return { proteinaG, carboidratoG, gorduraG, caloriasTotais };
+		}
+
+		/**
+		 * Calcula os macronutrientes fornecidos por uma dada porção de um alimento.
+		 * @param {string} idAlimento - O ID do alimento (chave no alimentosDB).
+		 * @param {number} porcaoGramas - A porção do alimento em gramas.
+		 * @returns {object} Objeto com { proteina, carboidrato, gordura } fornecidos pela porção.
+		 */
+		function calcularMacrosPorPorcao(idAlimento, porcaoGramas) {
+			const alimento = alimentosDB[idAlimento];
+			if (!alimento) return { proteina: 0, carboidrato: 0, gordura: 0 };
+
+			// Se o alimento é definido por unidade (ex: ovo), ajusta o cálculo
+			if (alimento.porUnidade && alimento.pesoUnidade) {
+				// A porção aqui é em unidades, convertemos para gramas para o cálculo base
+				// Mas a lógica de ajuste automático pode precisar de atenção especial para unidades.
+				// Para simplificar, vamos assumir que a "porcaoGramas" já é o peso total se for por unidade.
+				// Ou, mais corretamente, a 'porcaoGramas' vinda da célula é o número de unidades.
+				const numeroDeUnidades = porcaoGramas; // A célula 'porcao' conteria o número de unidades
+				const pesoTotalGramas = numeroDeUnidades * alimento.pesoUnidade;
+
+				return {
+					proteina: (alimento.proteina / alimento.pesoUnidade) * pesoTotalGramas, // Proteina por unidade * numero de unidades
+					carboidrato: (alimento.carboidrato / alimento.pesoUnidade) * pesoTotalGramas,
+					gordura: (alimento.gordura / alimento.pesoUnidade) * pesoTotalGramas
+				};
+			}
+
+			// Cálculo padrão para alimentos definidos por 100g
+			return {
+				proteina: (alimento.proteina / 100) * porcaoGramas,
+				carboidrato: (alimento.carboidrato / 100) * porcaoGramas,
+				gordura: (alimento.gordura / 100) * porcaoGramas
+			};
+		}
+
+
+		/**
+		 * Atualiza os valores de macronutrientes para uma linha específica da tabela.
+		 * @param {HTMLTableRowElement} linha - A linha da tabela (elemento TR) a ser atualizada.
+		 */
+		function atualizarValoresDaLinha(linha) {
+			const idAlimento = linha.dataset.alimentoId;
+			const celulaPorcao = linha.querySelector('.porcao');
+			// Garante que o valor da porção seja numérico, tratando caso de texto vazio ou inválido
+			const porcaoGramas = parseFloat(celulaPorcao.textContent) || 0;
+
+			// Se a porção for negativa, define como 0 para evitar cálculos incorretos
+			if (porcaoGramas < 0) {
+				celulaPorcao.textContent = "0";
+				// porcaoGramas = 0; // A linha acima já atualiza o DOM, o parseFloat pegará 0 na próxima chamada.
+			}
+
+
+			const macrosCalculados = calcularMacrosPorPorcao(idAlimento, porcaoGramas);
+
+			linha.querySelector('.macro-proteina').textContent = macrosCalculados.proteina.toFixed(1);
+			linha.querySelector('.macro-carboidrato').textContent = macrosCalculados.carboidrato.toFixed(1);
+			linha.querySelector('.macro-gordura').textContent = macrosCalculados.gordura.toFixed(1);
+		}
+
+
+		/**
+		 * Calcula e exibe os totais de macronutrientes e calorias do plano alimentar atual.
+		 * Itera sobre todas as linhas da tabela, atualiza os valores de cada linha e soma os totais.
+		 */
+		function atualizarPlanoCompleto() {
+			let totalProteinaPlano = 0;
+			let totalCarboidratoPlano = 0;
+			let totalGorduraPlano = 0;
+
+			const linhas = tabelaAlimentosBody.getElementsByTagName('tr');
+			for (let i = 0; i < linhas.length; i++) {
+				const linha = linhas[i];
+				atualizarValoresDaLinha(linha); // Atualiza os macros da linha com base na porção atual
+
+				// Soma os macros da linha atual aos totais (pegando os valores já atualizados do DOM)
+				totalProteinaPlano += parseFloat(linha.querySelector('.macro-proteina').textContent) || 0;
+				totalCarboidratoPlano += parseFloat(linha.querySelector('.macro-carboidrato').textContent) || 0;
+				totalGorduraPlano += parseFloat(linha.querySelector('.macro-gordura').textContent) || 0;
+			}
+
+			// Atualiza os spans na interface que mostram os totais do plano
+			spanTotalProteina.textContent = totalProteinaPlano.toFixed(1);
+			spanTotalCarboidrato.textContent = totalCarboidratoPlano.toFixed(1);
+			spanTotalGordura.textContent = totalGorduraPlano.toFixed(1);
+
+			// Calcula e exibe o total de calorias do plano
+			const caloriasDoPlano = (totalProteinaPlano * 4) + (totalCarboidratoPlano * 4) + (totalGorduraPlano * 9);
+			spanTotalCaloriasPlano.textContent = caloriasDoPlano.toFixed(0);
+		}
+
+
+		/**
+		 * Tenta ajustar automaticamente as porções dos alimentos para atingir as metas de macronutrientes.
+		 * Esta é uma lógica simplificada e pode não ser perfeita.
+		 * @param {object} metas - Objeto com { proteinaG, carboidratoG, gorduraG }.
+		 */
+		function ajustarPorcoesAutomaticamente(metas) {
+			if (!metas) return; // Não faz nada se as metas não forem válidas
+
+			const linhas = Array.from(tabelaAlimentosBody.getElementsByTagName('tr'));
+
+			// Zera as porções antes de começar o ajuste para um cálculo limpo
+			// Ou podemos manter as porções editadas pelo usuário como ponto de partida?
+			// Para esta versão, vamos zerar para simplificar o ajuste automático inicial.
+			// Se quiser manter, precisaria de uma lógica mais complexa.
+			linhas.forEach(linha => {
+				linha.querySelector('.porcao').textContent = "0";
+				atualizarValoresDaLinha(linha); // Atualiza macros da linha para zero
+			});
+
+
+			// Função auxiliar para ajustar um macro específico
+			function ajustarMacro(macroNome, metaGramas, idAlimentoChave) {
+				const alimentoChaveDB = alimentosDB[idAlimentoChave];
+				if (!alimentoChaveDB) return 0; // Alimento chave não encontrado
+
+				// Calcula quanto do macro já é fornecido por OUTROS alimentos (que não o chave atual)
+				let macroAtualDeOutros = 0;
+				linhas.forEach(linha => {
+					const idAlimentoLinha = linha.dataset.alimentoId;
+					if (idAlimentoLinha !== idAlimentoChave) { // Considera apenas os alimentos que NÃO são o chave
+						macroAtualDeOutros += parseFloat(linha.querySelector(`.macro-${macroNome}`).textContent) || 0;
+					}
+				});
+
+				// Calcula quanto do macro ainda é necessário e deve ser fornecido pelo alimento chave
+				let macroNecessarioDoChave = metaGramas - macroAtualDeOutros;
+
+				// Calcula a porção necessária do alimento chave para fornecer o macro restante
+				let novaPorcaoGramas = 0;
+				const macroPor100g = alimentoChaveDB[macroNome];
+
+				if (macroPor100g > 0) { // Evita divisão por zero se o alimento não tiver o macro
+					novaPorcaoGramas = (macroNecessarioDoChave / macroPor100g) * 100;
+				}
+
+				// Limita a porção para não ser negativa e define um máximo (opcional, mas bom para evitar valores absurdos)
+				novaPorcaoGramas = Math.max(0, novaPorcaoGramas);
+				// novaPorcaoGramas = Math.min(novaPorcaoGramas, 500); // Exemplo de limite máximo de 500g
+
+				// Encontra a linha do alimento chave e atualiza sua porção
+				const linhaAlimentoChave = linhas.find(l => l.dataset.alimentoId === idAlimentoChave);
+				if (linhaAlimentoChave) {
+					linhaAlimentoChave.querySelector('.porcao').textContent = novaPorcaoGramas.toFixed(0); // Arredonda para gramas inteiras
+					atualizarValoresDaLinha(linhaAlimentoChave); // Atualiza os macros desta linha com a nova porção
+				}
+				return parseFloat(linhaAlimentoChave.querySelector(`.macro-${macroNome}`).textContent) || 0; // Retorna o quanto este alimento está fornecendo do macro
+			}
+
+			// Ajusta sequencialmente: Proteína, depois Carboidrato, depois Gordura
+			// A ordem pode influenciar o resultado devido às interdependências.
+			if (alimentosChave.proteina) {
+				ajustarMacro('proteina', metas.proteinaG, alimentosChave.proteina);
+			}
+			// Após ajustar proteína, os valores de carboidrato e gordura dos outros alimentos podem ter mudado
+			// devido ao alimento de proteína. Por isso, recalculamos/atualizamos antes do próximo macro.
+			// A função atualizarPlanoCompleto faria isso, mas aqui estamos fazendo passo a passo.
+			// A chamada `atualizarValoresDaLinha` dentro de `ajustarMacro` já atualiza a linha do alimento chave.
+
+			if (alimentosChave.carboidrato) {
+				ajustarMacro('carboidrato', metas.carboidratoG, alimentosChave.carboidrato);
+			}
+
+			if (alimentosChave.gordura) {
+				ajustarMacro('gordura', metas.gorduraG, alimentosChave.gordura);
+			}
+
+			// Após todos os ajustes, atualiza a tabela inteira e os totais finais
+			atualizarPlanoCompleto();
+		}
+
+
+		// --- FUNÇÃO PRINCIPAL (Chamada pelo botão "Gerar Plano") ---
+		function gerarPlano() {
+			const metas = calcularMetasMacros(); // Calcula as metas P, C, G em gramas
+			if (metas) { // Procede apenas se as metas forem válidas
+				ajustarPorcoesAutomaticamente(metas); // Tenta ajustar as porções dos alimentos
+				// A função ajustarPorcoesAutomaticamente já chama atualizarPlanoCompleto no final.
+				secaoPlanoDieta.style.display = 'block'; // Mostra a seção do plano de dieta
+			}
+		}
+
+		// --- INICIALIZAÇÃO ---
+		// Popula a tabela com os alimentos do banco de dados quando a página carrega
+		document.addEventListener('DOMContentLoaded', () => {
+			popularTabelaAlimentosInicial();
+		});
+
+	</script>
+</body>
+</html>
