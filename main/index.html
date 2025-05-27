@@ -3,7 +3,9 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Gerador de Dieta</title>
+	<title>Calculadora de Equivalências por Refeição (Download)</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 	<style>
 		body {
 			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -18,13 +20,13 @@
 			max-width: 800px;
 			margin: 30px auto;
 			padding: 20px;
-			background-color: #4da85de5;
+			background-color: #49a660;
 			border-radius: 8px;
 			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 		}
 
 		header {
-			background-color: #087924; /* Verde escuro para um novo visual */
+			background-color: #087924; 
 			color: white;
 			padding: 1.5em 1em;
 			text-align: center;
@@ -50,7 +52,7 @@
 		}
 
 		h2 {
-			color: #1e7e34; /* Tom de verde mais escuro */
+			color: #1e7e34; 
 			margin-top: 0;
 			border-bottom: 2px solid #28a745;
 			padding-bottom: 10px;
@@ -100,12 +102,34 @@
 		button:hover {
 			background-color: #1e7e34;
 		}
+
+		.botoes-download-container {
+			display: flex;
+			gap: 10px; /* Espaço entre os botões de download */
+			margin-top: 20px;
+		}
+
+		button.download-btn-txt {
+			background-color: #007bff; /* Azul para o botão de download TXT */
+			flex: 1; /* Para que os botões dividam o espaço */
+		}
+		button.download-btn-txt:hover {
+			background-color: #0056b3;
+		}
+
+		button.download-btn-pdf {
+			background-color: #dc3545; /* Vermelho para o botão de download PDF */
+			flex: 1; /* Para que os botões dividam o espaço */
+		}
+		button.download-btn-pdf:hover {
+			background-color: #c82333;
+		}
 		
 		.opcoes-container {
 			display: grid;
-			/* Ajustado para permitir que os cards tenham larguras diferentes se necessário, mas geralmente 1fr é bom */
 			grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
 			gap: 20px;
+			margin-bottom: 20px; /* Espaço antes dos botões de download */
 		}
 
 		.opcao-macro {
@@ -118,15 +142,15 @@
 		
 		.opcao-macro h4 {
 			margin-top: 0;
-			margin-bottom: 5px; /* Reduzido para aproximar do subtítulo */
+			margin-bottom: 5px; 
 			color: #333;
 			font-size: 1.2em;
 		}
 		.opcao-macro .meta-refeicao-info {
 			font-size: 0.9em;
 			color: #555;
-			margin-bottom: 15px; /* Espaço antes da lista de alimentos */
-			display: block; /* Para ocupar a linha inteira */
+			margin-bottom: 15px; 
+			display: block; 
 		}
 
 
@@ -142,14 +166,30 @@
 		}
 
 		.alimento-item strong {
-			color: #218838; /* Tom de verde para destaque */
+			color: #218838; 
+		}
+
+		/* Estilos para o loading */
+		.loading-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-color: rgba(255, 255, 255, 0.7);
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			z-index: 1000;
+			font-size: 1.5em;
+			color: #333;
 		}
 	</style>
 </head>
 <body>
 	<div class="container">
 		<header>
-			<h1>Gerador de Dieta</h1>
+			<h1>Calculadora de Equivalências por Refeição</h1>
 		</header>
 		<main>
 			<section id="definicao-metas">
@@ -190,24 +230,28 @@
 
 			<section id="resultado-opcoes" style="display: none;">
 				<h2>Opções de Alimentos por Macronutriente</h2>
-				<div class="opcoes-container">
-					<div class="opcao-macro" id="opcoes-proteina">
+				<div class="opcoes-container" id="opcoes-container-capture"> <div class="opcao-macro" id="opcoes-proteina">
 						</div>
 					<div class="opcao-macro" id="opcoes-carboidrato">
 						</div>
 					<div class="opcao-macro" id="opcoes-gordura">
 						</div>
 				</div>
+				<div class="botoes-download-container">
+					<button onclick="baixarResultadosPDF()" class="download-btn-pdf">Baixar Resultados (.pdf)</button>
+				</div>
 			</section>
 		</main>
 	</div>
+	<div class="loading-overlay" id="loading-pdf" style="display: none;">A gerar PDF, por favor aguarde...</div>
+
 
 	<script>
 		// --- BANCO DE DADOS DE ALIMENTOS ---
 		const alimentosDB = {
 			frango: { nome: 'Peito de Frango', proteina: 31, carboidrato: 0, gordura: 3.6, ehProteina: true },
 			whey:   { nome: 'Whey Protein', proteina: 80, carboidrato: 5, gordura: 7, ehProteina: true },
-			ovo:    { nome: 'Ovo (unid)', proteina: 6.5, carboidrato: 0.5, gordura: 5, porUnidade: true, ehProteina: true }, // Assumindo ovo ~50g
+			ovo:    { nome: 'Ovo (unid)', proteina: 6.5, carboidrato: 0.5, gordura: 5, porUnidade: true, ehProteina: true }, 
 			claras: { nome: 'Clara de Ovo (100g)', proteina: 11, carboidrato: 0.7, gordura: 0.2, ehProteina: true },
 			picanha: { nome: 'Picanha Grelhada (sem gordura visível)', proteina: 30, carboidrato: 0, gordura: 8, ehProteina: true },
 
@@ -220,110 +264,186 @@
 			azeite: { nome: 'Azeite de Oliva Extravirgem', proteina: 0, carboidrato: 0, gordura: 100, ehGordura: true },
 			abacate: { nome: 'Abacate (polpa)', proteina: 2, carboidrato: 9, gordura: 15, ehGordura: true },
 			castanha_para: { nome: 'Castanha-do-Pará (unid. ~5g)', proteina: 0.7, carboidrato: 0.6, gordura: 3.3, porUnidade: true, ehGordura: true},
-			amendoim: { nome: 'Pasta de Amendoim Integral', proteina: 25, carboidrato: 20, gordura: 50, ehGordura: true, ehProteina: true } // Pode ser fonte de ambos
+			amendoim: { nome: 'Pasta de Amendoim Integral', proteina: 25, carboidrato: 20, gordura: 50, ehGordura: true, ehProteina: true }
 		};
 
-		/**
-		 * Função principal disparada pelo botão.
-		 */
+		// Variáveis globais para armazenar as metas por refeição, para uso no download
+		let metaProteinaRefeicaoGlobal = 0;
+		let metaCarboidratoRefeicaoGlobal = 0;
+		let metaGorduraRefeicaoGlobal = 0;
+
+
 		function gerarOpcoes() {
-			// --- PASSO 1: Obter dados do formulário ---
+			// Obter valores dos inputs
 			const caloriasTotais = parseFloat(document.getElementById('calorias').value) || 0;
 			const proteinaPercent = (parseFloat(document.getElementById('proteina-percent').value) || 0) / 100;
 			const carboidratoPercent = (parseFloat(document.getElementById('carboidrato-percent').value) || 0) / 100;
 			const gorduraPercent = (parseFloat(document.getElementById('gordura-percent').value) || 0) / 100;
 			
-			// Novos inputs para número de refeições por macro
 			const numRefeicoesProteina = parseInt(document.getElementById('refeicoes-proteina').value) || 1;
 			const numRefeicoesCarboidrato = parseInt(document.getElementById('refeicoes-carboidrato').value) || 1;
 			const numRefeicoesGordura = parseInt(document.getElementById('refeicoes-gordura').value) || 1;
 
-			// Validação simples
+			// Validações básicas
 			if (caloriasTotais <= 0 || numRefeicoesProteina <= 0 || numRefeicoesCarboidrato <= 0 || numRefeicoesGordura <= 0) {
 				alert("Por favor, insira valores válidos para calorias e número de refeições para cada macronutriente.");
 				return;
 			}
 			const somaPercentuais = proteinaPercent + carboidratoPercent + gorduraPercent;
-			if (somaPercentuais < 0.99 || somaPercentuais > 1.01) { // Permite pequena margem de erro
+			if (somaPercentuais < 0.99 || somaPercentuais > 1.01) { 
 				alert("A soma dos percentuais de proteína, carboidrato e gordura deve ser próxima de 100%.");
 				return;
 			}
 			
-			// --- PASSO 2: Calcular metas diárias e por refeição (agora individual por macro) ---
+			// Calcular metas totais diárias
 			const proteinaTotalG = (caloriasTotais * proteinaPercent) / 4;
 			const carboidratoTotalG = (caloriasTotais * carboidratoPercent) / 4;
 			const gorduraTotalG = (caloriasTotais * gorduraPercent) / 9;
 
-			const proteinaPorRefeicao = proteinaTotalG / numRefeicoesProteina;
-			const carboidratoPorRefeicao = carboidratoTotalG / numRefeicoesCarboidrato;
-			const gorduraPorRefeicao = gorduraTotalG / numRefeicoesGordura;
+			// Calcular e armazenar metas por refeição globalmente
+			metaProteinaRefeicaoGlobal = proteinaTotalG / numRefeicoesProteina;
+			metaCarboidratoRefeicaoGlobal = carboidratoTotalG / numRefeicoesCarboidrato;
+			metaGorduraRefeicaoGlobal = gorduraTotalG / numRefeicoesGordura;
 			
-			// --- PASSO 3: Popular as seções com as opções de alimentos ---
+			// Obter elementos do DOM para os cards de opções
 			const divProteina = document.getElementById('opcoes-proteina');
 			const divCarboidrato = document.getElementById('opcoes-carboidrato');
 			const divGordura = document.getElementById('opcoes-gordura');
 
-			// Limpa e adiciona o título e a meta por refeição em cada card
-			divProteina.innerHTML = `<h4>Opções de Proteína</h4><span class="meta-refeicao-info">Meta: ${proteinaPorRefeicao.toFixed(1)}g / refeição</span>`;
-			divCarboidrato.innerHTML = `<h4>Opções de Carboidrato</h4><span class="meta-refeicao-info">Meta: ${carboidratoPorRefeicao.toFixed(1)}g / refeição</span>`;
-			divGordura.innerHTML = `<h4>Opções de Gordura</h4><span class="meta-refeicao-info">Meta: ${gorduraPorRefeicao.toFixed(1)}g / refeição</span>`;
+			// Limpar e preencher cabeçalhos dos cards
+			divProteina.innerHTML = `<h4>Opções de Proteína</h4><span class="meta-refeicao-info">Meta: ${metaProteinaRefeicaoGlobal.toFixed(1)}g por refeição  Quantidade de refeições: ${numRefeicoesProteina}</span>`;
+			divCarboidrato.innerHTML = `<h4>Opções de Carboidrato</h4><span class="meta-refeicao-info">Meta: ${metaCarboidratoRefeicaoGlobal.toFixed(1)}g por refeição  Quantidade de refeições: ${numRefeicoesCarboidrato}</span>`;
+			divGordura.innerHTML = `<h4>Opções de Gordura</h4><span class="meta-refeicao-info">Meta: ${metaGorduraRefeicaoGlobal.toFixed(1)}g por refeição  Quantidade de refeições: ${numRefeicoesGordura}</span>`;
 
+			// Iterar sobre o banco de dados de alimentos e popular os cards
 			for (const idAlimento in alimentosDB) {
 				const alimento = alimentosDB[idAlimento];
 				let porcaoNecessaria;
 				let unidade;
 				let htmlItem = '';
 
-				// Se for um alimento de PROTEÍNA
+				// Lógica para Proteína
 				if (alimento.ehProteina && alimento.proteina > 0) { 
 					if (alimento.porUnidade) {
-						porcaoNecessaria = proteinaPorRefeicao / alimento.proteina;
-						unidade = porcaoNecessaria !== 1 ? 'unidades' : 'unidade'; // Singular/plural
+						porcaoNecessaria = metaProteinaRefeicaoGlobal / alimento.proteina;
+						unidade = porcaoNecessaria !== 1 ? 'unidades' : 'unidade'; 
 					} else {
-						porcaoNecessaria = (proteinaPorRefeicao / alimento.proteina) * 100;
+						porcaoNecessaria = (metaProteinaRefeicaoGlobal / alimento.proteina) * 100;
 						unidade = 'g';
 					}
-					// Só adiciona se a porção for positiva
 					if (porcaoNecessaria > 0) {
-						htmlItem = `<div class="alimento-item">${alimento.nome}: <strong>${porcaoNecessaria.toFixed(1)} ${unidade}</strong></div>`;
+						htmlItem = `<div class="alimento-item" data-nome="${alimento.nome}" data-porcao="${porcaoNecessaria.toFixed(1)} ${unidade}">${alimento.nome}: <strong>${porcaoNecessaria.toFixed(1)} ${unidade}</strong></div>`;
 						divProteina.innerHTML += htmlItem;
 					}
 				}
 				
-				// Se for um alimento de CARBOIDRATO
-				// Um alimento pode ser fonte de múltiplos macros (ex: aveia, pasta de amendoim), então não usamos 'else if'
+				// Lógica para Carboidrato
 				if (alimento.ehCarboidrato && alimento.carboidrato > 0) {
 					if (alimento.porUnidade) {
-						porcaoNecessaria = carboidratoPorRefeicao / alimento.carboidrato;
+						porcaoNecessaria = metaCarboidratoRefeicaoGlobal / alimento.carboidrato;
 						unidade = porcaoNecessaria !== 1 ? 'unidades' : 'unidade';
 					} else {
-						porcaoNecessaria = (carboidratoPorRefeicao / alimento.carboidrato) * 100;
+						porcaoNecessaria = (metaCarboidratoRefeicaoGlobal / alimento.carboidrato) * 100;
 						unidade = 'g';
 					}
 					if (porcaoNecessaria > 0) {
-						htmlItem = `<div class="alimento-item">${alimento.nome}: <strong>${porcaoNecessaria.toFixed(1)} ${unidade}</strong></div>`;
+						htmlItem = `<div class="alimento-item" data-nome="${alimento.nome}" data-porcao="${porcaoNecessaria.toFixed(1)} ${unidade}">${alimento.nome}: <strong>${porcaoNecessaria.toFixed(1)} ${unidade}</strong></div>`;
 						divCarboidrato.innerHTML += htmlItem;
 					}
 				}
 				
-				// Se for um alimento de GORDURA
+				// Lógica para Gordura
 				if (alimento.ehGordura && alimento.gordura > 0) {
 					if (alimento.porUnidade) {
-						porcaoNecessaria = gorduraPorRefeicao / alimento.gordura;
+						porcaoNecessaria = metaGorduraRefeicaoGlobal / alimento.gordura;
 						unidade = porcaoNecessaria !== 1 ? 'unidades' : 'unidade';
 					} else {
-						porcaoNecessaria = (gorduraPorRefeicao / alimento.gordura) * 100;
+						porcaoNecessaria = (metaGorduraRefeicaoGlobal / alimento.gordura) * 100;
 						unidade = 'g';
 					}
 					if (porcaoNecessaria > 0) {
-						htmlItem = `<div class="alimento-item">${alimento.nome}: <strong>${porcaoNecessaria.toFixed(1)} ${unidade}</strong></div>`;
+						htmlItem = `<div class="alimento-item" data-nome="${alimento.nome}" data-porcao="${porcaoNecessaria.toFixed(1)} ${unidade}">${alimento.nome}: <strong>${porcaoNecessaria.toFixed(1)} ${unidade}</strong></div>`;
 						divGordura.innerHTML += htmlItem;
 					}
 				}
 			}
-
+			// Exibir a seção de resultados
 			document.getElementById('resultado-opcoes').style.display = 'block';
 		}
+
+		/**
+		 * Função para gerar e baixar o conteúdo dos resultados como um arquivo .pdf
+		 */
+		async function baixarResultadosPDF() {
+			const secaoResultados = document.getElementById('resultado-opcoes');
+			if (window.getComputedStyle(secaoResultados).display === 'none') {
+				alert("Primeiro calcule as opções para poder baixá-las.");
+				return;
+			}
+
+			// Mostrar overlay de loading
+			const loadingOverlay = document.getElementById('loading-pdf');
+			loadingOverlay.style.display = 'flex';
+
+			// Importar jsPDF dinamicamente (já está no head, mas é boa prática para clareza)
+			const { jsPDF } = window.jspdf;
+
+			// Elemento a ser capturado (o container dos cards)
+			const elementoParaCapturar = document.getElementById('opcoes-container-capture');
+			
+			try {
+				// Usar html2canvas para capturar o elemento como uma imagem (canvas)
+				const canvas = await html2canvas(elementoParaCapturar, {
+					scale: 2, // Aumenta a resolução da captura para melhor qualidade no PDF
+					useCORS: true // Se houver imagens externas, embora não seja o caso aqui
+				});
+				
+				const imgData = canvas.toDataURL('image/png'); // Converte o canvas para uma imagem base64
+
+				// Cria uma nova instância do jsPDF
+				// 'p' para portrait (retrato), 'mm' para milímetros, 'a4' para tamanho da página
+				const pdf = new jsPDF('p', 'mm', 'a4');
+				
+				const pdfWidth = pdf.internal.pageSize.getWidth();
+				const pdfHeight = pdf.internal.pageSize.getHeight();
+
+				// Calcular as dimensões da imagem no PDF mantendo a proporção
+				const imgProps = pdf.getImageProperties(imgData);
+				const aspectRatio = imgProps.width / imgProps.height;
+				
+				let imgWidth = pdfWidth - 20; // Largura da imagem com margens de 10mm de cada lado
+				let imgHeight = imgWidth / aspectRatio;
+
+				// Se a altura da imagem for maior que a altura do PDF (com margens), ajustar
+				if (imgHeight > pdfHeight - 20) {
+					imgHeight = pdfHeight - 20; // Altura da imagem com margens de 10mm
+					imgWidth = imgHeight * aspectRatio;
+				}
+				
+				// Calcular posição para centralizar a imagem
+				const x = (pdfWidth - imgWidth) / 2;
+				const y = 10; // Margem superior de 10mm
+
+				// Adicionar um título ao PDF antes da imagem
+				pdf.setFontSize(18);
+				pdf.text("Opções de Alimentos por Macronutriente", pdfWidth / 2, y, { align: "center" });
+				
+				// Adicionar a imagem ao PDF
+				// Os parâmetros são: dados da imagem, formato, x, y, largura, altura
+				pdf.addImage(imgData, 'PNG', x, y + 10, imgWidth, imgHeight); 
+				
+				// Salvar o PDF
+				pdf.save('Dieta.pdf');
+
+			} catch (error) {
+				console.error("Erro ao gerar o PDF:", error);
+				alert("Ocorreu um erro ao gerar o PDF. Verifique a consola para mais detalhes.");
+			} finally {
+				// Esconder overlay de loading
+				loadingOverlay.style.display = 'none';
+			}
+		}
+
 	</script>
 </body>
 </html>
