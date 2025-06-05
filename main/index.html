@@ -191,43 +191,44 @@
 		</header>
 		<main>
 			<section id="definicao-metas">
-				<div class="form-group">
-					<label for="nomeDieta">Nome da Dieta:</label>
-					<input type="text" name="nomeDieta" id="nomeDieta" placeholder="Ex: Dieta de Jõao">
-				</div>
-				<h2>Definir Metas Diárias e Divisão por Refeições</h2>
-				<div class="form-group">
-					<label for="calorias">Calorias Totais Diárias (kcal):</label>
-					<input type="number" id="calorias" name="calorias" value="0" min="0">
-				</div>
-				<div class="form-group">
-					<label for="proteina-percent">% de Proteína:</label>
-					<input type="number" id="proteina-percent" name="proteina-percent" value="40" min="0" max="100">
-				</div>
-				<div class="form-group">
-					<label for="carboidrato-percent">% de Carboidrato:</label>
-					<input type="number" id="carboidrato-percent" name="carboidrato-percent" value="40" min="0" max="100">
-				</div>
-				<div class="form-group">
-					<label for="gordura-percent">% de Gordura:</label>
-					<input type="number" id="gordura-percent" name="gordura-percent" value="20" min="0" max="100">
-				</div>
-				
-				<h3>Divisão de Refeições por Macronutriente:</h3>
-				<div class="form-group">
-					<label for="refeicoes-proteina">Nº de Refeições para Proteína:</label>
-					<input type="number" id="refeicoes-proteina" name="refeicoes-proteina" value="5" min="1">
-				</div>
-				<div class="form-group">
-					<label for="refeicoes-carboidrato">Nº de Refeições para Carboidrato:</label>
-					<input type="number" id="refeicoes-carboidrato" name="refeicoes-carboidrato" value="5" min="1">
-				</div>
-				<div class="form-group">
-					<label for="refeicoes-gordura">Nº de Refeições para Gordura:</label>
-					<input type="number" id="refeicoes-gordura" name="refeicoes-gordura" value="3" min="1">
-				</div>
-
-				<button onclick="gerarOpcoes()">Calcular Opções por Refeição</button>
+				<form>
+					<div class="form-group">
+						<label for="nomeDieta">Nome da Dieta:</label>
+						<input type="text" name="nomeDieta" id="nomeDieta" placeholder="Ex: Dieta de Jõao">
+					</div>
+					<h2>Definir Metas Diárias e Divisão por Refeições</h2>
+					<div class="form-group">
+						<label for="calorias">Calorias Totais Diárias (kcal):</label>
+						<input type="number" id="calorias" name="calorias" value="0" min="0">
+					</div>
+					<div class="form-group">
+						<label for="proteina-percent">% de Proteína:</label>
+						<input type="number" id="proteina-percent" name="proteina-percent" value="40" min="0" max="100">
+					</div>
+					<div class="form-group">
+						<label for="carboidrato-percent">% de Carboidrato:</label>
+						<input type="number" id="carboidrato-percent" name="carboidrato-percent" value="40" min="0" max="100">
+					</div>
+					<div class="form-group">
+						<label for="gordura-percent">% de Gordura:</label>
+						<input type="number" id="gordura-percent" name="gordura-percent" value="20" min="0" max="100">
+					</div>
+					
+					<h3>Divisão de Refeições por Macronutriente:</h3>
+					<div class="form-group">
+						<label for="refeicoes-proteina">Nº de Refeições para Proteína:</label>
+						<input type="number" id="refeicoes-proteina" name="refeicoes-proteina" value="5" min="1">
+					</div>
+					<div class="form-group">
+						<label for="refeicoes-carboidrato">Nº de Refeições para Carboidrato:</label>
+						<input type="number" id="refeicoes-carboidrato" name="refeicoes-carboidrato" value="5" min="1">
+					</div>
+					<div class="form-group">
+						<label for="refeicoes-gordura">Nº de Refeições para Gordura:</label>
+						<input type="number" id="refeicoes-gordura" name="refeicoes-gordura" value="3" min="1">
+					</div>
+					<button onclick="gerarOpcoes()">Calcular Opções por Refeição</button>
+				</form>
 			</section>
 
 			<section id="resultado-opcoes" style="display: none;">
