@@ -254,8 +254,6 @@
 			//PROTEINAS
 			peito_frango: { nome: 'Peito de Frango', proteina: 31, carboidrato: 0, gordura: 3.6, ehProteina: true, ehCarboidrato: false, ehGordura: false },
 
-			ovo_unidade: { nome: 'Ovo (unid)', proteina: 6.5, carboidrato: 0.5, gordura: 5, porUnidade: true, ehProteina: true, ehCarboidrato: false, ehGordura: false },
-
 			clara_ovo: { nome: 'Clara de Ovo', proteina: 11, carboidrato: 0.7, gordura: 0.2, ehProteina: true, ehCarboidrato: false, ehGordura: false }, // Assumindo 100g
 
 			picanha_bovina: { nome: 'Picanha Bovina', proteina: 30, carboidrato: 0, gordura: 8, ehProteina: true, ehCarboidrato: false, ehGordura: false },
@@ -268,14 +266,11 @@
 
 			file_mignon_suino: { nome: 'Filé Mignon Suíno', proteina: 28.0, carboidrato: 0.0, gordura: 7.0, ehProteina: true, ehCarboidrato: false, ehGordura: false },
 
-			queijo_minas: { nome: 'Queijo Minas Frescal', proteina: 17.0, carboidrato: 3.0, gordura: 20.0, ehProteina: true, ehCarboidrato: false, ehGordura: true },
-			 // Queijo é fonte de proteína e gordura, aqui priorizando proteína como categoria principal para o card.
 			peixe_branco: { nome: 'Peixe Branco (Ex: Tilápia, Merluza)', proteina: 26.0, carboidrato: 0.0, gordura: 2.5, ehProteina: true, ehCarboidrato: false, ehGordura: false },
 
-			lagarto_bovino: { nome: 'Lagarto Bovino', proteina: 32.0, carboidrato: 0.0, gordura: 8.0, ehProteina: true, ehCarboidrato: false, ehGordura: false },
+			lagarto_quadrado: { nome: 'Lagarto Quadrado', proteina: 32.0, carboidrato: 0.0, gordura: 8.0, ehProteina: true, ehCarboidrato: false, ehGordura: false },
 
 			atum_agua: { nome: 'Atum em Água', proteina: 18.0, carboidrato: 0.5, gordura: 0.8, ehProteina: true, ehCarboidrato: false, ehGordura: false },
-			sardinha_oleo: { nome: 'Sardinha em Óleo', proteina: 19.0, carboidrato: 0.0, gordura: 25.0, ehProteina: true, ehCarboidrato: false, ehGordura: true }, // Similar ao queijo, aqui priorizando proteína.
 
 			sardinha_tomate: { nome: 'Sardinha em Molho de Tomate', proteina: 15.0, carboidrato: 3.5, gordura: 7.0, ehProteina: true, ehCarboidrato: false, ehGordura: false },
 
@@ -285,6 +280,8 @@
 
 			whey_isolado_82_dose: { nome: 'Whey Protein Isolado 82% (dose ~30g)', proteina: 24.6, carboidrato: 1, gordura: 0.5, porUnidade: true, ehProteina: true, ehCarboidrato: false, ehGordura: false },
 
+			albumina_dose: { nome: 'Albumina (dose ~30g)', proteina: 24, carboidrato: 1, gordura: 0, porUnidade: true, ehProteina: true, ehCarboidrato: false, ehGordura: false },
+
 			//CARBOS
 			arroz_branco: { nome: 'Arroz Branco', proteina: 2.7, carboidrato: 28, gordura: 0.3, ehProteina: false, ehCarboidrato: true, ehGordura: false },
 
@@ -293,8 +290,6 @@
 			aveia_flocos: { nome: 'Aveia em Flocos', proteina: 14, carboidrato: 60, gordura: 7, ehProteina: false, ehCarboidrato: true, ehGordura: false }, // Primariamente Carbo, apesar da proteína e gordura.
 
 			maca_unidade: { nome: 'Maçã (unid)', proteina: 0.4, carboidrato: 22, gordura: 0.3, porUnidade: true, ehProteina: false, ehCarboidrato: true, ehGordura: false },
-
-			banana_prata_unidade: { nome: 'Banana Prata (unid)', proteina: 1.3, carboidrato: 26, gordura: 0.3, porUnidade: true, ehProteina: false, ehCarboidrato: true, ehGordura: false },
 
 			feijao_carioca_preto: { nome: 'Feijão Carioca/Preto', proteina: 4.8, carboidrato: 13.6, gordura: 0.5, ehProteina: false, ehCarboidrato: true, ehGordura: false }, // Primariamente Carbo, com bom aporte de proteína.
 
@@ -314,8 +309,6 @@
 			// Assumindo 100g
 			abacaxi_100g: { nome: 'Abacaxi', proteina: 0.5, carboidrato: 13.1, gordura: 0.1, ehProteina: false, ehCarboidrato: true, ehGordura: false }, // Assumindo 100g
 
-			uva_100g: { nome: 'Uva', proteina: 0.7, carboidrato: 18.1, gordura: 0.2, ehProteina: false, ehCarboidrato: true, ehGordura: false }, // Assumindo 100g
-
 			pera_unidade: { nome: 'Pera (unid)', proteina: 0.7, carboidrato: 27.4, gordura: 0.2, porUnidade: true, ehProteina: false, ehCarboidrato: true, ehGordura: false },
 
 			brocolis: { nome: 'Brócolis', proteina: 2.4, carboidrato: 7.2, gordura: 0.4, ehProteina: false, ehCarboidrato: true, ehGordura: false },
@@ -323,10 +316,6 @@
 			cenoura: { nome: 'Cenoura', proteina: 0.8, carboidrato: 8.2, gordura: 0.2, ehProteina: false, ehCarboidrato: true, ehGordura: false },
 
 			macarrao_branco: { nome: 'Macarrão Branco', proteina: 5.8, carboidrato: 30.9, gordura: 0.9, ehProteina: false, ehCarboidrato: true, ehGordura: false },
-
-			caldo_cana_100ml: { nome: 'Caldo de Cana', proteina: 0.1, carboidrato: 18.5, gordura: 0.0, porUnidade: true, ehProteina: false, ehCarboidrato: true, ehGordura: false }, // porUnidade refere-se a 100ml
-
-			suco_uva_integral_100ml: { nome: 'Suco de Uva Integral', proteina: 0.2, carboidrato: 15.0, gordura: 0.0, porUnidade: true, ehProteina: false, ehCarboidrato: true, ehGordura: false }, // porUnidade refere-se a 100ml
 
 			abobora_cabotia: { nome: 'Abóbora Cabotia', proteina: 1.1, carboidrato: 8.7, gordura: 0.1, ehProteina: false, ehCarboidrato: true, ehGordura: false },
 
@@ -339,6 +328,16 @@
 			batata_inglesa_100g: { nome: 'Batata Inglesa', proteina: 1.9, carboidrato: 20.0, gordura: 0.1, ehProteina: false, ehCarboidrato: true, ehGordura: false }, // Assumindo 100g
 
 			mamao_formosa_fatia: { nome: 'Mamão Formosa (fatia)', proteina: 1.3, carboidrato: 29.0, gordura: 0.3, porUnidade: true, ehProteina: false, ehCarboidrato: true, ehGordura: false },
+
+			manga: { nome: 'Manga (polpa)', proteina: 0.8, carboidrato: 15, gordura: 0.4, ehProteina: false, ehCarboidrato: true, ehGordura: false },
+
+			caqui: { nome: 'Caqui', proteina: 0.6, carboidrato: 19, gordura: 0.2, ehProteina: false, ehCarboidrato: true, ehGordura: false },
+
+			batata_baroa: { nome: 'Batata Baroa (Mandioquinha)', proteina: 1.0, carboidrato: 25, gordura: 0.2, ehProteina: false, ehCarboidrato: true, ehGordura: false },
+
+			couve_flor: { nome: 'Couve-flor', proteina: 1.8, carboidrato: 4, gordura: 0.5, ehProteina: false, ehCarboidrato: true, ehGordura: false },
+
+			cara: { nome: 'Cará', proteina: 1.5, carboidrato: 27, gordura: 0.1, ehProteina: false, ehCarboidrato: true, ehGordura: false },
 
 			//GORDURA
 			azeite_oliva: { nome: 'Azeite de Oliva Extravirgem', proteina: 0, carboidrato: 0, gordura: 100, ehProteina: false, ehCarboidrato: false, ehGordura: true },
