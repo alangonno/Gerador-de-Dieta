@@ -266,6 +266,8 @@
 
 			file_mignon_suino: { nome: 'Filé Mignon Suíno', proteina: 28.0, carboidrato: 0.0, gordura: 7.0, ehProteina: true, ehCarboidrato: false, ehGordura: false },
 
+			queijo_branco: { nome: 'Queijo Branco', proteina: 18, carboidrato: 2.5, gordura: 20, ehProteina: true, ehCarboidrato: false, ehGordura: true },
+
 			peixe_branco: { nome: 'Peixe Branco (Ex: Tilápia, Merluza)', proteina: 26.0, carboidrato: 0.0, gordura: 2.5, ehProteina: true, ehCarboidrato: false, ehGordura: false },
 
 			lagarto_quadrado: { nome: 'Lagarto Quadrado', proteina: 32.0, carboidrato: 0.0, gordura: 8.0, ehProteina: true, ehCarboidrato: false, ehGordura: false },
@@ -274,13 +276,13 @@
 
 			sardinha_tomate: { nome: 'Sardinha em Molho de Tomate', proteina: 15.0, carboidrato: 3.5, gordura: 7.0, ehProteina: true, ehCarboidrato: false, ehGordura: false },
 
-			whey_concentrado_70_dose: { nome: 'Whey Protein Concentrado 70% (dose ~30g)', proteina: 21, carboidrato: 4, gordura: 2, porUnidade: true, ehProteina: true, ehCarboidrato: false, ehGordura: false },
-			
-			whey_3w_80_dose: { nome: 'Whey Protein 3W 80% (dose ~30g)', proteina: 24, carboidrato: 2, gordura: 1.5, porUnidade: true, ehProteina: true, ehCarboidrato: false, ehGordura: false },
+			whey_concentrado_70: { nome: 'Whey Protein Concentrado 70%', proteina: 70, carboidrato: 13.3, gordura: 6.7, ehProteina: true, ehCarboidrato: false, ehGordura: false },
 
-			whey_isolado_82_dose: { nome: 'Whey Protein Isolado 82% (dose ~30g)', proteina: 24.6, carboidrato: 1, gordura: 0.5, porUnidade: true, ehProteina: true, ehCarboidrato: false, ehGordura: false },
+			whey_isolado_82: { nome: 'Whey Protein Isolado 82%', proteina: 82, carboidrato: 3.3, gordura: 1.7, ehProteina: true, ehCarboidrato: false, ehGordura: false },
+	
+			whey_3w_80: { nome: 'Whey Protein 3W 80%', proteina: 80, carboidrato: 6.7, gordura: 5, ehProteina: true, ehCarboidrato: false, ehGordura: false },
 
-			albumina_dose: { nome: 'Albumina (dose ~30g)', proteina: 24, carboidrato: 1, gordura: 0, porUnidade: true, ehProteina: true, ehCarboidrato: false, ehGordura: false },
+			albumina: { nome: 'Albumina', proteina: 80, carboidrato: 3.3, gordura: 0, ehProteina: true, ehCarboidrato: false, ehGordura: false },
 
 			//CARBOS
 			arroz_branco: { nome: 'Arroz Branco', proteina: 2.7, carboidrato: 28, gordura: 0.3, ehProteina: false, ehCarboidrato: true, ehGordura: false },
@@ -289,7 +291,15 @@
 
 			aveia_flocos: { nome: 'Aveia em Flocos', proteina: 14, carboidrato: 60, gordura: 7, ehProteina: false, ehCarboidrato: true, ehGordura: false }, // Primariamente Carbo, apesar da proteína e gordura.
 
-			maca_unidade: { nome: 'Maçã (unid)', proteina: 0.4, carboidrato: 22, gordura: 0.3, porUnidade: true, ehProteina: false, ehCarboidrato: true, ehGordura: false },
+			maca: { nome: 'Maçã', proteina: 0.3, carboidrato: 14, gordura: 0.2, ehProteina: false, ehCarboidrato: true, ehGordura: false },
+
+			pera: { nome: 'Pera', proteina: 0.4, carboidrato: 15, gordura: 0.1, ehProteina: false, ehCarboidrato: true, ehGordura: false },
+
+			laranja: { nome: 'Laranja', proteina: 0.9, carboidrato: 12, gordura: 0.1, ehProteina: false, ehCarboidrato: true, ehGordura: false },
+
+			mamao_papaya: { nome: 'Mamão Papaya', proteina: 0.5, carboidrato: 11, gordura: 0.1, ehProteina: false, ehCarboidrato: true, ehGordura: false },
+
+			mamao_formosa: { nome: 'Mamão Formosa', proteina: 0.6, carboidrato: 11.5, gordura: 0.1, ehProteina: false, ehCarboidrato: true, ehGordura: false },
 
 			feijao_carioca_preto: { nome: 'Feijão Carioca/Preto', proteina: 4.8, carboidrato: 13.6, gordura: 0.5, ehProteina: false, ehCarboidrato: true, ehGordura: false }, // Primariamente Carbo, com bom aporte de proteína.
 
@@ -304,12 +314,10 @@
 			tapioca: { nome: 'Tapioca', proteina: 0.6, carboidrato: 22.0, gordura: 0.2, ehProteina: false, ehCarboidrato: true, ehGordura: false },
 
 			morango_100g: { nome: 'Morango', proteina: 0.7, carboidrato: 7.7, gordura: 0.3, ehProteina: false, ehCarboidrato: true, ehGordura: false },
-			 // Assumindo 100g
+			
 			melao_100g: { nome: 'Melão', proteina: 0.8, carboidrato: 8.2, gordura: 0.2, ehProteina: false, ehCarboidrato: true, ehGordura: false }, 
-			// Assumindo 100g
+			
 			abacaxi_100g: { nome: 'Abacaxi', proteina: 0.5, carboidrato: 13.1, gordura: 0.1, ehProteina: false, ehCarboidrato: true, ehGordura: false }, // Assumindo 100g
-
-			pera_unidade: { nome: 'Pera (unid)', proteina: 0.7, carboidrato: 27.4, gordura: 0.2, porUnidade: true, ehProteina: false, ehCarboidrato: true, ehGordura: false },
 
 			brocolis: { nome: 'Brócolis', proteina: 2.4, carboidrato: 7.2, gordura: 0.4, ehProteina: false, ehCarboidrato: true, ehGordura: false },
 
@@ -321,13 +329,7 @@
 
 			abobrinha_italiana: { nome: 'Abobrinha Italiana', proteina: 1.1, carboidrato: 3.6, gordura: 0.2, ehProteina: false, ehCarboidrato: true, ehGordura: false },
 
-			laranja_unidade: { nome: 'Laranja (unid)', proteina: 1.4, carboidrato: 17.6, gordura: 0.2, porUnidade: true, ehProteina: false, ehCarboidrato: true, ehGordura: false },
-
-			mamao_papaya_unidade: { nome: 'Mamão Papaya (unid)', proteina: 1.5, carboidrato: 31.2, gordura: 0.3, porUnidade: true, ehProteina: false, ehCarboidrato: true, ehGordura: false },
-
 			batata_inglesa_100g: { nome: 'Batata Inglesa', proteina: 1.9, carboidrato: 20.0, gordura: 0.1, ehProteina: false, ehCarboidrato: true, ehGordura: false }, // Assumindo 100g
-
-			mamao_formosa_fatia: { nome: 'Mamão Formosa (fatia)', proteina: 1.3, carboidrato: 29.0, gordura: 0.3, porUnidade: true, ehProteina: false, ehCarboidrato: true, ehGordura: false },
 
 			manga: { nome: 'Manga (polpa)', proteina: 0.8, carboidrato: 15, gordura: 0.4, ehProteina: false, ehCarboidrato: true, ehGordura: false },
 
@@ -344,19 +346,20 @@
 
 			abacate_polpa: { nome: 'Abacate', proteina: 2, carboidrato: 9, gordura: 15, ehProteina: false, ehCarboidrato: false, ehGordura: true }, 
 			// Primariamente Gordura
-			castanha_para_unidade: { nome: 'Castanha-do-Pará (unid)', proteina: 0.7, carboidrato: 0.6, gordura: 3.3, porUnidade: true, ehProteina: false, ehCarboidrato: false, ehGordura: true },
-
 			pasta_amendoim: { nome: 'Pasta de Amendoim Integral', proteina: 25, carboidrato: 20, gordura: 50, ehProteina: false, ehCarboidrato: false, ehGordura: true }, // Primariamente Gordura, com bom aporte de proteína
-
-			gema_ovo_unidade: { nome: 'Gema de Ovo (unidade)', proteina: 2.7, carboidrato: 0.6, gordura: 4.5, porUnidade: true, ehProteina: false, ehCarboidrato: false, ehGordura: true }, // Primariamente Gordura
 
 			coco_polpa_100g: { nome: 'Coco', proteina: 3.3, carboidrato: 15.2, gordura: 33.5, ehProteina: false, ehCarboidrato: false, ehGordura: true }, // Assumindo 100g, primariamente Gordura
 
 			mix_oleaginosas_100g: { nome: 'Mix de Oleaginosas', proteina: 18.0, carboidrato: 20.0, gordura: 55.0, ehProteina: false, ehCarboidrato: false, ehGordura: true }, // Assumindo 100g, primariamente Gordura
+			
+			// --- VERSÃO ATUALIZADA POR 100g ---
+			castanha_do_para: { nome: 'Castanha-do-Pará', proteina: 14.3, carboidrato: 12.3, gordura: 66.3, ehProteina: false, ehCarboidrato: false, ehGordura: true },
 
-			amendoas_porcao: { nome: 'Amêndoas (porção)', proteina: 6.0, carboidrato: 6.0, gordura: 14.0, porUnidade: true, ehProteina: false, ehCarboidrato: false, ehGordura: true }, // Primariamente Gordura
+			gema_ovo: { nome: 'Gema de Ovo', proteina: 16, carboidrato: 3.6, gordura: 27, ehProteina: false, ehCarboidrato: false, ehGordura: true },
 
-			nozes_porcao: { nome: 'Nozes (porção)', proteina: 4.3, carboidrato: 3.9, gordura: 18.5, porUnidade: true, ehProteina: false, ehCarboidrato: false, ehGordura: true }, // Primariamente Gordura
+			amendoas: { nome: 'Amêndoas', proteina: 21.2, carboidrato: 21.6, gordura: 49.4, ehProteina: false, ehCarboidrato: false, ehGordura: true },
+				
+			nozes: { nome: 'Nozes', proteina: 15.2, carboidrato: 13.7, gordura: 65.2, ehProteina: false, ehCarboidrato: false, ehGordura: true },
 
 			oleo_linhaca_colher: { nome: 'Óleo de Linhaça (colher sopa)', proteina: 0.0, carboidrato: 0.0, gordura: 14.0, porUnidade: true, ehProteina: false, ehCarboidrato: false, ehGordura: true }
 
