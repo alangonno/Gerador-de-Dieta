@@ -1,128 +1,140 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Calculadora de Equivalências por Refeição (Download)</title>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-	<style>
-		body {
-			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-			margin: 0;
-			padding: 0;
-			background-color: #00a41ecf;
-			color: #333;
-			line-height: 1.6;
-		}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Equivalências por Refeição</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        /* --- ESTILOS GERAIS E PALETA DE CORES --- */
+        :root {
+            --cor-fundo: #f4f7f6;
+            --cor-container: #ffffff;
+            --cor-primaria: #2d9d8f; /* Um verde-azulado moderno */
+            --cor-primaria-escura: #268a7e;
+            --cor-secundaria-pdf: #c0392b; /* Vermelho sóbrio para PDF */
+            --cor-secundaria-pdf-escura: #a93226;
+            --cor-texto-principal: #2c3e50;
+            --cor-texto-secundario: #566573;
+            --cor-borda: #e0e0e0;
+            --sombra-suave: 0 4px 15px rgba(45, 157, 143, 0.1);
+        }
 
-		.container {
-			max-width: 800px;
-			margin: 30px auto;
-			padding: 20px;
-			background-color: #49a660;
-			border-radius: 8px;
-			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-		}
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 20px 10px;
+            background-color: var(--cor-fundo);
+            color: var(--cor-texto-principal);
+            line-height: 1.6;
+        }
 
-		header {
-			background-color: #087924; 
-			color: white;
-			padding: 1.5em 1em;
-			text-align: center;
-			margin-bottom: 30px;
-			border-radius: 8px 8px 0 0;
-		}
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 0; /* Removido para o header e main controlarem o padding */
+            background-color: var(--cor-container);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            overflow: hidden; /* Garante que os cantos arredondados sejam aplicados ao header */
+        }
 
-		header h1 {
-			margin: 0;
-			font-size: 2em;
-		}
+        header {
+            background-color: var(--cor-primaria);
+            color: white;
+            padding: 2em 1.5em;
+            text-align: center;
+        }
 
-		main {
-			padding: 10px;
-		}
+        header h1 {
+            margin: 0;
+            font-size: 2.2em;
+            font-weight: 700;
+        }
 
-		section {
-			margin-bottom: 30px;
-			padding: 20px;
-			background-color: #f9f9f9;
-			border-radius: 8px;
-			border: 1px solid #e0e0e0;
-		}
+        main {
+            padding: 30px;
+        }
 
-		h2 {
-			color: #1e7e34; 
-			margin-top: 0;
-			border-bottom: 2px solid #28a745;
-			padding-bottom: 10px;
-			margin-bottom: 20px;
-		}
+        section {
+            margin-bottom: 30px;
+        }
 
-		.form-group {
-			margin-bottom: 20px;
-		}
+        section:last-child {
+            margin-bottom: 0;
+        }
+        
+        h2 {
+            color: var(--cor-primaria);
+            margin-top: 0;
+            border-bottom: 2px solid var(--cor-primaria);
+            padding-bottom: 10px;
+            margin-bottom: 25px;
+            font-size: 1.6em;
+            font-weight: 600;
+        }
 
-		.form-group label {
-			display: block;
-			margin-bottom: 8px;
-			font-weight: bold;
-			color: #555;
-		}
+        /* --- FORMULÁRIOS --- */
+        .form-group {
+            margin-bottom: 22px;
+        }
 
-		.form-group input {
-			width: 100%;
-			padding: 12px;
-			border: 1px solid #ccc;
-			border-radius: 4px;
-			box-sizing: border-box;
-			font-size: 1em;
-		}
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--cor-texto-secundario);
+        }
 
-		.form-group input[type="number"]:focus {
-			border-color: #28a745;
-			box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
-			outline: none;
-		}
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--cor-borda);
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1em;
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
 
-		button {
-			background-color: #28a745;
-			color: white;
-			padding: 12px 20px;
-			border: none;
-			border-radius: 4px;
-			cursor: pointer;
-			font-size: 1.1em;
-			transition: background-color 0.3s ease;
-			display: block;
-			width: 100%;
-			margin-top: 10px;
-		}
+        .form-group input:focus {
+            border-color: var(--cor-primaria);
+            box-shadow: 0 0 0 3px rgba(45, 157, 143, 0.2);
+            outline: none;
+        }
 
-		button:hover {
-			background-color: #1e7e34;
-		}
+        /* --- BOTÕES --- */
+        button {
+            color: white;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+            display: block;
+            width: 100%;
+            margin-top: 10px;
+            background-color: var(--cor-primaria);
+        }
 
-		.botoes-download-container {
-			display: flex;
-			gap: 10px; 
-			margin-top: 20px;
-		}
-
-		button.download-btn-txt {
-			background-color: #007bff; 
-		}
-		button.download-btn-txt:hover {
-			background-color: #0056b3;
-		}
-
-		button.download-btn-pdf {
-			background-color: #dc3545; 
-		}
-		button.download-btn-pdf:hover {
-			background-color: #c82333;
-		}
-		
+        button:hover {
+            background-color: var(--cor-primaria-escura);
+            transform: translateY(-2px);
+        }
+        
+        button.download-btn-pdf {
+            background-color: var(--cor-secundaria-pdf); 
+        }
+        button.download-btn-pdf:hover {
+            background-color: var(--cor-secundaria-pdf-escura);
+        }
+        
 		.opcoes-container {
 			display: grid;
 			grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
@@ -167,85 +179,103 @@
 			color: #218838; 
 		}
 
-		
-		.loading-overlay {
-			position: fixed;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-			background-color: rgba(255, 255, 255, 0.7);
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			z-index: 1000;
-			font-size: 1.5em;
-			color: #333;
-		}
-	</style>
+
+      
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(0, 0, 0, 0.1);
+            border-left-color: var(--cor-primaria);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
 </head>
 <body>
-	<div class="container">
-		<header>
-			<h1>Calculadora de Equivalências por Refeição</h1>
-		</header>
-		<main>
-			<section id="definicao-metas">
-					<div class="form-group">
-						<label for="nomeDieta">Nome da Dieta:</label>
-						<input type="text" name="nomeDieta" id="nomeDieta" placeholder="Ex: Dieta de Jõao">
-					</div>
-					<h2>Definir Metas Diárias e Divisão por Refeições</h2>
-					<div class="form-group">
-						<label for="calorias">Calorias Totais Diárias (kcal):</label>
-						<input type="number" id="calorias" name="calorias" value="0" min="0">
-					</div>
-					<div class="form-group">
-						<label for="proteina-percent">% de Proteína:</label>
-						<input type="number" id="proteina-percent" name="proteina-percent" value="40" min="0" max="100">
-					</div>
-					<div class="form-group">
-						<label for="carboidrato-percent">% de Carboidrato:</label>
-						<input type="number" id="carboidrato-percent" name="carboidrato-percent" value="40" min="0" max="100">
-					</div>
-					<div class="form-group">
-						<label for="gordura-percent">% de Gordura:</label>
-						<input type="number" id="gordura-percent" name="gordura-percent" value="20" min="0" max="100">
-					</div>
-					
-					<h3>Divisão de Refeições por Macronutriente:</h3>
-					<div class="form-group">
-						<label for="refeicoes-proteina">Nº de Refeições para Proteína:</label>
-						<input type="number" id="refeicoes-proteina" name="refeicoes-proteina" value="5" min="1">
-					</div>
-					<div class="form-group">
-						<label for="refeicoes-carboidrato">Nº de Refeições para Carboidrato:</label>
-						<input type="number" id="refeicoes-carboidrato" name="refeicoes-carboidrato" value="5" min="1">
-					</div>
-					<div class="form-group">
-						<label for="refeicoes-gordura">Nº de Refeições para Gordura:</label>
-						<input type="number" id="refeicoes-gordura" name="refeicoes-gordura" value="3" min="1">
-					</div>
-					<button onclick="gerarOpcoes()">Calcular Opções por Refeição</button>
-			</section>
+    <div class="container">
+        <header>
+            <h1>Calculadora de Equivalências</h1>
+        </header>
+        <main>
+            <section id="definicao-metas">
+                    <div class="form-group">
+                        <label for="nomeDieta">Nome da Dieta:</label>
+                        <input type="text" name="nomeDieta" id="nomeDieta" placeholder="Ex: Dieta de Jõao">
+                    </div>
+                    <h2>Definir Metas e Refeições</h2>
+                    <div class="form-group">
+                        <label for="calorias">Calorias Totais Diárias (kcal):</label>
+                        <input type="number" id="calorias" name="calorias" value="0" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="proteina-percent">% de Proteína:</label>
+                        <input type="number" id="proteina-percent" name="proteina-percent" value="40" min="0" max="100">
+                    </div>
+                    <div class="form-group">
+                        <label for="carboidrato-percent">% de Carboidrato:</label>
+                        <input type="number" id="carboidrato-percent" name="carboidrato-percent" value="40" min="0" max="100">
+                    </div>
+                    <div class="form-group">
+                        <label for="gordura-percent">% de Gordura:</label>
+                        <input type="number" id="gordura-percent" name="gordura-percent" value="20" min="0" max="100">
+                    </div>
+                    
+                    <h3>Divisão por Refeições</h3>
+                    <div class="form-group">
+                        <label for="refeicoes-proteina">Nº de Refeições para Proteína:</label>
+                        <input type="number" id="refeicoes-proteina" name="refeicoes-proteina" value="5" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="refeicoes-carboidrato">Nº de Refeições para Carboidrato:</label>
+                        <input type="number" id="refeicoes-carboidrato" name="refeicoes-carboidrato" value="5" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="refeicoes-gordura">Nº de Refeições para Gordura:</label>
+                        <input type="number" id="refeicoes-gordura" name="refeicoes-gordura" value="3" min="1">
+                    </div>
+                    <button onclick="gerarOpcoes()">Calcular Opções</button>
+            </section>
 
-			<section id="resultado-opcoes" style="display: none;">
-				<h2>Opções de Alimentos por Macronutriente</h2>
-				<div class="opcoes-container" id="opcoes-container-capture"> <div class="opcao-macro" id="opcoes-proteina">
-						</div>
-					<div class="opcao-macro" id="opcoes-carboidrato">
-						</div>
-					<div class="opcao-macro" id="opcoes-gordura">
-						</div>
-				</div>
-				<div class="botoes-download-container">
-					<button onclick="baixarResultadosPDF()" class="download-btn-pdf">Baixar Resultados (.pdf)</button>
-				</div>
-			</section>
-		</main>
-	</div>
-	<div class="loading-overlay" id="loading-pdf" style="display: none;">A gerar PDF, por favor aguarde...</div>
+            <section id="resultado-opcoes" style="display: none;">
+                <h2>Opções de Alimentos por Macronutriente</h2>
+                <div class="opcoes-container" id="opcoes-container-capture">
+                    <div class="opcao-macro" id="opcoes-proteina"></div>
+                    <div class="opcao-macro" id="opcoes-carboidrato"></div>
+                    <div class="opcao-macro" id="opcoes-gordura"></div>
+                </div>
+                <div class="botoes-download-container">
+                    <button onclick="baixarResultadosPDF()" class="download-btn-pdf">Baixar Resultados (.pdf)</button>
+                </div>
+            </section>
+        </main>
+    </div>
 
+    <div class="loading-overlay" id="loading-pdf" style="display: none;">
+        <div class="spinner"></div>
+        <span>Gerando PDF, por favor aguarde...</span>
+    </div>
 
 	<script>
 		// --- BANCO DE DADOS DE ALIMENTOS ---

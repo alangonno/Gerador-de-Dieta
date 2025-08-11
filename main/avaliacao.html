@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avaliação Corporal Completa</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        :root {
+            --cor-fundo: #f8f9fa;
+            --cor-container: #ffffff;
+            --cor-primaria: #007bff;
+            --cor-primaria-escura: #0056b3;
+            --cor-texto-principal: #212529;
+            --cor-texto-secundario: #495057;
+            --cor-borda: #dee2e6;
+            --cor-sucesso: #28a745;
+            --cor-alerta: #ffc107;
+            --cor-perigo: #dc3545;
+            --sombra: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 20px 10px;
+            background-color: var(--cor-fundo);
+            color: var(--cor-texto-principal);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            background-color: var(--cor-container);
+            border-radius: 16px;
+            box-shadow: var(--sombra);
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--cor-primaria);
+            color: white;
+            padding: 2em 1.5em;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.2em;
+            font-weight: 700;
+        }
+
+        main {
+            padding: 25px 40px;
+        }
+
+        h2 {
+            font-size: 1.8em;
+            font-weight: 600;
+            color: var(--cor-texto-principal);
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--cor-borda);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px 30px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group label {
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--cor-texto-secundario);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--cor-borda);
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1em;
+            font-family: 'Poppins', sans-serif;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-group input:focus {
+            border-color: var(--cor-primaria);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+            outline: none;
+        }
+        
+        .gender-group {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        .gender-group label {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        button#calculate-btn {
+            background-color: var(--cor-primaria);
+            color: white;
+            padding: 15px 25px;
+            width: 100%;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        button#calculate-btn:hover {
+            background-color: var(--cor-primaria-escura);
+            transform: translateY(-2px);
+        }
+        
+        /* --- SEÇÃO DE RESULTADOS --- */
+        #report-section {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--cor-borda);
+        }
+
+        .report-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .report-header h2 {
+            border: none;
+        }
+
+        #report-name {
+            font-size: 1.2em;
+            color: var(--cor-primaria);
+            font-weight: 600;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .result-card {
+            background-color: var(--cor-fundo);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--cor-borda);
+        }
+        
+        .result-card h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            color: var(--cor-texto-principal);
+        }
+
+        .result-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: var(--cor-primaria);
+        }
+        
+        .result-class {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            color: white;
+            margin-left: 10px;
+        }
+
+        /* Cores de classificação */
+        .class-baixo { background-color: #0dcaf0; } /* Ciano */
+        .class-normal { background-color: var(--cor-sucesso); }
+        .class-sobrepeso { background-color: var(--cor-alerta); color: #333;}
+        .class-obeso { background-color: var(--cor-perigo); }
+        .class-risco-aumentado { background-color: var(--cor-alerta); color: #333;}
+        .class-risco-muito-aumentado { background-color: var(--cor-perigo); }
+
+
+        .imc-bar {
+            width: 100%;
+            height: 12px;
+            background-color: #e9ecef;
+            border-radius: 6px;
+            margin-top: 20px;
+            position: relative;
+        }
+
+        .imc-indicator {
+            height: 100%;
+            border-radius: 6px;
+            transition: width 0.5s ease-in-out;
+        }
+
+        #disclaimer {
+            font-size: 0.85em;
+            color: var(--cor-texto-secundario);
+            margin-top: 15px;
+            font-style: italic;
+        }
+        
+        button#download-pdf-btn {
+            background-color: var(--cor-sucesso);
+            color: white;
+            padding: 15px 25px;
+            width: auto;
+            min-width: 250px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        button#download-pdf-btn:hover {
+            background-color: #1e7e34;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Relatório de Avaliação Corporal</h1>
+        </header>
+        <main>
+            <section id="input-section">
+                <h2>Insira seus Dados</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="name">Nome Completo</label>
+                        <input type="text" id="name" placeholder="Seu nome aqui">
+                    </div>
+                    <div class="form-group">
+                        <label for="age">Idade</label>
+                        <input type="number" id="age" placeholder="Ex: 30" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label>Gênero</label>
+                        <div class="gender-group">
+                            <label><input type="radio" name="gender" value="male" checked> Masculino</label>
+                            <label><input type="radio" name="gender" value="female"> Feminino</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="weight">Peso (kg)</label>
+                        <input type="number" id="weight" step="0.1" placeholder="Ex: 75.5">
+                    </div>
+                    <div class="form-group">
+                        <label for="height">Altura (cm)</label>
+                        <input type="number" id="height" placeholder="Ex: 178">
+                    </div>
+                    <div class="form-group">
+                        <label for="waist">Cintura (cm)</label>
+                        <input type="number" id="waist" step="0.1" placeholder="Na altura do umbigo">
+                    </div>
+                    <div class="form-group">
+                        <label for="hip">Quadril (cm)</label>
+                        <input type="number" id="hip" step="0.1" placeholder="Na parte mais larga">
+                    </div>
+                </div>
+                <button id="calculate-btn">Gerar Avaliação</button>
+            </section>
+
+            <section id="report-section" style="display: none;">
+                <div class="report-header">
+                    <h2>Seu Relatório de Avaliação</h2>
+                    <p id="report-name"></p>
+                </div>
+                <div class="results-grid">
+                    <div class="result-card">
+                        <h3>Índice de Massa Corporal (IMC)</h3>
+                        <p>
+                            <span class="result-value" id="imc-value">0.0</span>
+                            <span class="result-class" id="imc-class"></span>
+                        </p>
+                        <div class="imc-bar">
+                            <div class="imc-indicator" id="imc-indicator"></div>
+                        </div>
+                    </div>
+                    <div class="result-card">
+                        <h3>Gordura Corporal (%GC)</h3>
+                        <p>
+                            <span class="result-value" id="bfp-value">0.0</span>%
+                        </p>
+                        <p id="disclaimer">
+                            *Este é um valor estimado com base no seu IMC. Para valores precisos, consulte um profissional.
+                        </p>
+                    </div>
+                    <div class="result-card">
+                        <h3>Relação Cintura-Quadril (RCQ)</h3>
+                        <p>
+                             <span class="result-value" id="rcq-value">0.0</span>
+                             <span class="result-class" id="rcq-class"></span>
+                        </p>
+                        <p id="rcq-info">Indica o risco de doenças associadas à gordura abdominal.</p>
+                    </div>
+                </div>
+                <button id="download-pdf-btn">Baixar Relatório em PDF</button>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        document.getElementById('calculate-btn').addEventListener('click', function() {
+            // 1. OBTER E VALIDAR OS DADOS
+            const name = document.getElementById('name').value;
+            const age = parseFloat(document.getElementById('age').value);
+            const gender = document.querySelector('input[name="gender"]:checked').value;
+            const weight = parseFloat(document.getElementById('weight').value);
+            const heightCm = parseFloat(document.getElementById('height').value);
+            const waist = parseFloat(document.getElementById('waist').value);
+            const hip = parseFloat(document.getElementById('hip').value);
+
+            if (!name || !age || !weight || !heightCm || !waist || !hip || age <= 0 || weight <= 0 || heightCm <= 0 || waist <= 0 || hip <= 0) {
+                alert('Por favor, preencha todos os campos com valores válidos.');
+                return;
+            }
+
+            // 2. REALIZAR OS CÁLCULOS
+            const heightM = heightCm / 100;
+
+            // Cálculo do IMC
+            const imc = weight / (heightM * heightM);
+
+            // Cálculo da % Gordura Corporal (Estimativa de Deurenberg)
+            const genderFactor = (gender === 'male') ? 1 : 0;
+            const bfp = (1.20 * imc) + (0.23 * age) - (10.8 * genderFactor) - 5.4;
+
+            // Cálculo da Relação Cintura-Quadril (RCQ)
+            const rcq = waist / hip;
+
+            // 3. INTERPRETAR OS RESULTADOS
+            let imcClass = '', imcColorClass = '', imcIndicatorColor = '';
+            if (imc < 18.5) {
+                imcClass = 'Baixo Peso';
+                imcColorClass = 'class-baixo';
+                imcIndicatorColor = '#0dcaf0';
+            } else if (imc < 24.9) {
+                imcClass = 'Peso Normal';
+                imcColorClass = 'class-normal';
+                imcIndicatorColor = 'var(--cor-sucesso)';
+            } else if (imc < 29.9) {
+                imcClass = 'Sobrepeso';
+                imcColorClass = 'class-sobrepeso';
+                imcIndicatorColor = 'var(--cor-alerta)';
+            } else {
+                imcClass = 'Obesidade';
+                imcColorClass = 'class-obeso';
+                imcIndicatorColor = 'var(--cor-perigo)';
+            }
+
+            let rcqClass = '', rcqColorClass = '';
+            if (gender === 'male') {
+                if (rcq > 1.0) {
+                    rcqClass = 'Risco Muito Aumentado';
+                    rcqColorClass = 'class-risco-muito-aumentado';
+                } else if (rcq > 0.9) {
+                    rcqClass = 'Risco Aumentado';
+                    rcqColorClass = 'class-risco-aumentado';
+                } else {
+                    rcqClass = 'Risco Baixo';
+                    rcqColorClass = 'class-normal';
+                }
+            } else { // female
+                if (rcq > 0.85) {
+                    rcqClass = 'Risco Muito Aumentado';
+                    rcqColorClass = 'class-risco-muito-aumentado';
+                } else if (rcq > 0.8) {
+                    rcqClass = 'Risco Aumentado';
+                    rcqColorClass = 'class-risco-aumentado';
+                } else {
+                    rcqClass = 'Risco Baixo';
+                    rcqColorClass = 'class-normal';
+                }
+            }
+
+
+            // 4. EXIBIR OS RESULTADOS NA PÁGINA
+            document.getElementById('report-name').textContent = `Relatório de ${name}`;
+            
+            // IMC
+            document.getElementById('imc-value').textContent = imc.toFixed(1);
+            const imcClassEl = document.getElementById('imc-class');
+            imcClassEl.textContent = imcClass;
+            imcClassEl.className = 'result-class ' + imcColorClass;
+            const imcIndicator = document.getElementById('imc-indicator');
+            imcIndicator.style.backgroundColor = imcIndicatorColor;
+            // A barra de progresso pode ser uma simples representação da categoria
+            let indicatorWidth = 25; // Baixo
+            if (imcClass === 'Peso Normal') indicatorWidth = 50;
+            if (imcClass === 'Sobrepeso') indicatorWidth = 75;
+            if (imcClass === 'Obesidade') indicatorWidth = 100;
+            imcIndicator.style.width = indicatorWidth + '%';
+
+            // % Gordura
+            document.getElementById('bfp-value').textContent = bfp.toFixed(1);
+
+            // RCQ
+            document.getElementById('rcq-value').textContent = rcq.toFixed(2);
+            const rcqClassEl = document.getElementById('rcq-class');
+            rcqClassEl.textContent = rcqClass;
+            rcqClassEl.className = 'result-class ' + rcqColorClass;
+
+            // Exibir a seção de resultados e rolar até ela
+            const reportSection = document.getElementById('report-section');
+            reportSection.style.display = 'block';
+            reportSection.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Função para baixar o PDF
+        document.getElementById('download-pdf-btn').addEventListener('click', async function() {
+            const reportSection = document.getElementById('report-section');
+            const downloadButton = document.getElementById('download-pdf-btn');
+            const name = document.getElementById('name').value || 'usuario';
+
+            // Esconde o botão de download temporariamente para não aparecer no PDF
+            downloadButton.style.display = 'none';
+
+            try {
+                const canvas = await html2canvas(reportSection, {
+                    scale: 2, // Melhora a qualidade da imagem
+                    useCORS: true,
+                    logging: false
+                });
+
+                const imgData = canvas.toDataURL('image/png');
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = pdf.internal.pageSize.getHeight();
+                const canvasWidth = canvas.width;
+                const canvasHeight = canvas.height;
+                const ratio = canvasWidth / canvasHeight;
+
+                let imgWidth = pdfWidth - 20; // com margens
+                let imgHeight = imgWidth / ratio;
+
+                // Se a altura da imagem for maior que a página, ajusta
+                if (imgHeight > pdfHeight - 20) {
+                    imgHeight = pdfHeight - 20;
+                    imgWidth = imgHeight * ratio;
+                }
+                
+                const x = (pdfWidth - imgWidth) / 2; // Centraliza
+                const y = 10; // Margem superior
+                
+                pdf.addImage(imgData, 'PNG', x, y, imgWidth, imgHeight);
+                pdf.save(`avaliacao-${name.replace(/ /g, '-')}.pdf`);
+
+            } catch (error) {
+                console.error("Erro ao gerar PDF:", error);
+                alert("Ocorreu um erro ao gerar o PDF. Tente novamente.");
+            } finally {
+                // Mostra o botão novamente após a captura
+                downloadButton.style.display = 'block';
+            }
+        });
+
+    </script>
+</body>
+</html>
