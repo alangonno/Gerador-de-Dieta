@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Calculadora de Equivalências por Refeição (Download)</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+	<style>
+		body {
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			margin: 0;
+			padding: 0;
+			background-color: #00a41ecf;
+			color: #333;
+			line-height: 1.6;
+		}
+
+		.container {
+			max-width: 800px;
+			margin: 30px auto;
+			padding: 20px;
+			background-color: #49a660;
+			border-radius: 8px;
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+		}
+
+		header {
+			background-color: #087924; 
+			color: white;
+			padding: 1.5em 1em;
+			text-align: center;
+			margin-bottom: 30px;
+			border-radius: 8px 8px 0 0;
+		}
+
+		header h1 {
+			margin: 0;
+			font-size: 2em;
+		}
+
+		main {
+			padding: 10px;
+		}
+
+		section {
+			margin-bottom: 30px;
+			padding: 20px;
+			background-color: #f9f9f9;
+			border-radius: 8px;
+			border: 1px solid #e0e0e0;
+		}
+
+		h2 {
+			color: #1e7e34; 
+			margin-top: 0;
+			border-bottom: 2px solid #28a745;
+			padding-bottom: 10px;
+			margin-bottom: 20px;
+		}
+
+		.form-group {
+			margin-bottom: 20px;
+		}
+
+		.form-group label {
+			display: block;
+			margin-bottom: 8px;
+			font-weight: bold;
+			color: #555;
+		}
+
+		.form-group input {
+			width: 100%;
+			padding: 12px;
+			border: 1px solid #ccc;
+			border-radius: 4px;
+			box-sizing: border-box;
+			font-size: 1em;
+		}
+
+		.form-group input[type="number"]:focus {
+			border-color: #28a745;
+			box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+			outline: none;
+		}
+
+		button {
+			background-color: #28a745;
+			color: white;
+			padding: 12px 20px;
+			border: none;
+			border-radius: 4px;
+			cursor: pointer;
+			font-size: 1.1em;
+			transition: background-color 0.3s ease;
+			display: block;
+			width: 100%;
+			margin-top: 10px;
+		}
+
+		button:hover {
+			background-color: #1e7e34;
+		}
+
+		.botoes-download-container {
+			display: flex;
+			gap: 10px; 
+			margin-top: 20px;
+		}
+
+		button.download-btn-txt {
+			background-color: #007bff; 
+		}
+		button.download-btn-txt:hover {
+			background-color: #0056b3;
+		}
+
+		button.download-btn-pdf {
+			background-color: #dc3545; 
+		}
+		button.download-btn-pdf:hover {
+			background-color: #c82333;
+		}
+		
+		.opcoes-container {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
+			gap: 20px;
+			margin-bottom: 20px; 
+		}
+
+		.opcao-macro {
+			padding: 15px;
+			border: 1px solid #ddd;
+			border-radius: 8px;
+			background-color: #fff;
+			box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+		}
+		
+		.opcao-macro h4 {
+			margin-top: 0;
+			margin-bottom: 5px; 
+			color: #333;
+			font-size: 1.2em;
+		}
+		.opcao-macro .meta-refeicao-info {
+			font-size: 0.9em;
+			color: #555;
+			margin-bottom: 15px; 
+			display: block; 
+		}
+
+
+		.alimento-item {
+			margin-bottom: 8px;
+			padding-bottom: 8px;
+			border-bottom: 1px solid #eee;
+		}
+
+		.alimento-item:last-child {
+			border-bottom: none;
+			margin-bottom: 0;
+		}
+
+		.alimento-item strong {
+			color: #218838; 
+		}
+
+		
+		.loading-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-color: rgba(255, 255, 255, 0.7);
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			z-index: 1000;
+			font-size: 1.5em;
+			color: #333;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<header>
+			<h1>Calculadora de Equivalências por Refeição</h1>
+		</header>
+		<main>
+			<section id="definicao-metas">
+					<div class="form-group">
+						<label for="nomeDieta">Nome da Dieta:</label>
+						<input type="text" name="nomeDieta" id="nomeDieta" placeholder="Ex: Dieta de Jõao">
+					</div>
+					<h2>Definir Metas Diárias e Divisão por Refeições</h2>
+					<div class="form-group">
+						<label for="calorias">Calorias Totais Diárias (kcal):</label>
+						<input type="number" id="calorias" name="calorias" value="0" min="0">
+					</div>
+					<div class="form-group">
+						<label for="proteina-percent">% de Proteína:</label>
+						<input type="number" id="proteina-percent" name="proteina-percent" value="40" min="0" max="100">
+					</div>
+					<div class="form-group">
+						<label for="carboidrato-percent">% de Carboidrato:</label>
+						<input type="number" id="carboidrato-percent" name="carboidrato-percent" value="40" min="0" max="100">
+					</div>
+					<div class="form-group">
+						<label for="gordura-percent">% de Gordura:</label>
+						<input type="number" id="gordura-percent" name="gordura-percent" value="20" min="0" max="100">
+					</div>
+					
+					<h3>Divisão de Refeições por Macronutriente:</h3>
+					<div class="form-group">
+						<label for="refeicoes-proteina">Nº de Refeições para Proteína:</label>
+						<input type="number" id="refeicoes-proteina" name="refeicoes-proteina" value="5" min="1">
+					</div>
+					<div class="form-group">
+						<label for="refeicoes-carboidrato">Nº de Refeições para Carboidrato:</label>
+						<input type="number" id="refeicoes-carboidrato" name="refeicoes-carboidrato" value="5" min="1">
+					</div>
+					<div class="form-group">
+						<label for="refeicoes-gordura">Nº de Refeições para Gordura:</label>
+						<input type="number" id="refeicoes-gordura" name="refeicoes-gordura" value="3" min="1">
+					</div>
+					<button onclick="gerarOpcoes()">Calcular Opções por Refeição</button>
+			</section>
+
+			<section id="resultado-opcoes" style="display: none;">
+				<h2>Opções de Alimentos por Macronutriente</h2>
+				<div class="opcoes-container" id="opcoes-container-capture"> <div class="opcao-macro" id="opcoes-proteina">
+						</div>
+					<div class="opcao-macro" id="opcoes-carboidrato">
+						</div>
+					<div class="opcao-macro" id="opcoes-gordura">
+						</div>
+				</div>
+				<div class="botoes-download-container">
+					<button onclick="baixarResultadosPDF()" class="download-btn-pdf">Baixar Resultados (.pdf)</button>
+				</div>
+			</section>
+		</main>
+	</div>
+	<div class="loading-overlay" id="loading-pdf" style="display: none;">A gerar PDF, por favor aguarde...</div>
+
+
+	<script>
+		// --- BANCO DE DADOS DE ALIMENTOS ---
+		const alimentosDB = {
+
+			//PROTEINAS
+			peito_frango: { nome: 'Peito de Frango', proteina: 31, carboidrato: 0, gordura: 3.6, ehProteina: true, ehCarboidrato: false, ehGordura: false },
+
+			clara_ovo: { nome: 'Clara de Ovo', proteina: 11, carboidrato: 0.7, gordura: 0.2, ehProteina: true, ehCarboidrato: false, ehGordura: false }, // Assumindo 100g
+
+			picanha_bovina: { nome: 'Picanha Bovina', proteina: 30, carboidrato: 0, gordura: 8, ehProteina: true, ehCarboidrato: false, ehGordura: false },
+
+			patinho_bovino: { nome: 'Patinho Bovino', proteina: 30.0, carboidrato: 0.0, gordura: 6.0, ehProteina: true, ehCarboidrato: false, ehGordura: false },
+
+			alcatra_bovina: { nome: 'Alcatra Bovina', proteina: 31.0, carboidrato: 0.0, gordura: 10.0, ehProteina: true, ehCarboidrato: false, ehGordura: false },
+
+			file_mignon_bovino: { nome: 'Filé Mignon Bovino', proteina: 29.0, carboidrato: 0.0, gordura: 9.0, ehProteina: true, ehCarboidrato: false, ehGordura: false },
+
+			file_mignon_suino: { nome: 'Filé Mignon Suíno', proteina: 28.0, carboidrato: 0.0, gordura: 7.0, ehProteina: true, ehCarboidrato: false, ehGordura: false },
+
+			queijo_branco: { nome: 'Queijo Branco', proteina: 18, carboidrato: 2.5, gordura: 20, ehProteina: true, ehCarboidrato: false, ehGordura: true },
+
+			peixe_branco: { nome: 'Peixe Branco (Ex: Tilápia, Merluza)', proteina: 26.0, carboidrato: 0.0, gordura: 2.5, ehProteina: true, ehCarboidrato: false, ehGordura: false },
+
+			lagarto_quadrado: { nome: 'Lagarto Quadrado', proteina: 32.0, carboidrato: 0.0, gordura: 8.0, ehProteina: true, ehCarboidrato: false, ehGordura: false },
+
+			atum_agua: { nome: 'Atum em Água', proteina: 18.0, carboidrato: 0.5, gordura: 0.8, ehProteina: true, ehCarboidrato: false, ehGordura: false },
+
+			sardinha_tomate: { nome: 'Sardinha em Molho de Tomate', proteina: 15.0, carboidrato: 3.5, gordura: 7.0, ehProteina: true, ehCarboidrato: false, ehGordura: false },
+
+			whey_concentrado_70: { nome: 'Whey Protein Concentrado 70%', proteina: 70, carboidrato: 13.3, gordura: 6.7, ehProteina: true, ehCarboidrato: false, ehGordura: false },
+
+			whey_isolado_82: { nome: 'Whey Protein Isolado 82%', proteina: 82, carboidrato: 3.3, gordura: 1.7, ehProteina: true, ehCarboidrato: false, ehGordura: false },
+	
+			whey_3w_80: { nome: 'Whey Protein 3W 80%', proteina: 80, carboidrato: 6.7, gordura: 5, ehProteina: true, ehCarboidrato: false, ehGordura: false },
+
+			albumina: { nome: 'Albumina', proteina: 80, carboidrato: 3.3, gordura: 0, ehProteina: true, ehCarboidrato: false, ehGordura: false },
+
+			//CARBOS
+			arroz_branco: { nome: 'Arroz Branco', proteina: 2.7, carboidrato: 28, gordura: 0.3, ehProteina: false, ehCarboidrato: true, ehGordura: false },
+
+			batata_doce: { nome: 'Batata Doce', proteina: 1.6, carboidrato: 20, gordura: 0.1, ehProteina: false, ehCarboidrato: true, ehGordura: false },
+
+			aveia_flocos: { nome: 'Aveia em Flocos', proteina: 14, carboidrato: 60, gordura: 7, ehProteina: false, ehCarboidrato: true, ehGordura: false }, // Primariamente Carbo, apesar da proteína e gordura.
+
+			maca: { nome: 'Maçã', proteina: 0.3, carboidrato: 14, gordura: 0.2, ehProteina: false, ehCarboidrato: true, ehGordura: false },
+
+			pera: { nome: 'Pera', proteina: 0.4, carboidrato: 15, gordura: 0.1, ehProteina: false, ehCarboidrato: true, ehGordura: false },
+
+			laranja: { nome: 'Laranja', proteina: 0.9, carboidrato: 12, gordura: 0.1, ehProteina: false, ehCarboidrato: true, ehGordura: false },
+
+			mamao_papaya: { nome: 'Mamão Papaya', proteina: 0.5, carboidrato: 11, gordura: 0.1, ehProteina: false, ehCarboidrato: true, ehGordura: false },
+
+			mamao_formosa: { nome: 'Mamão Formosa', proteina: 0.6, carboidrato: 11.5, gordura: 0.1, ehProteina: false, ehCarboidrato: true, ehGordura: false },
+
+			feijao_carioca_preto: { nome: 'Feijão Carioca/Preto', proteina: 4.8, carboidrato: 13.6, gordura: 0.5, ehProteina: false, ehCarboidrato: true, ehGordura: false }, // Primariamente Carbo, com bom aporte de proteína.
+
+			mandioca: { nome: 'Mandioca', proteina: 1.4, carboidrato: 30.1, gordura: 0.3, ehProteina: false, ehCarboidrato: true, ehGordura: false },
+
+			inhame: { nome: 'Inhame', proteina: 2.1, carboidrato: 27.9, gordura: 0.2, ehProteina: false, ehCarboidrato: true, ehGordura: false },
+
+			macarrao_integral: { nome: 'Macarrão Integral', proteina: 5.8, carboidrato: 26.5, gordura: 0.9, ehProteina: false, ehCarboidrato: true, ehGordura: false },
+
+			pao_integral_100g: { nome: 'Pão Integral', proteina: 10.0, carboidrato: 40.0, gordura: 4.0, ehProteina: false, ehCarboidrato: true, ehGordura: false }, // Assumindo 100g
+
+			tapioca: { nome: 'Tapioca', proteina: 0.6, carboidrato: 22.0, gordura: 0.2, ehProteina: false, ehCarboidrato: true, ehGordura: false },
+
+			morango_100g: { nome: 'Morango', proteina: 0.7, carboidrato: 7.7, gordura: 0.3, ehProteina: false, ehCarboidrato: true, ehGordura: false },
+			
+			melao_100g: { nome: 'Melão', proteina: 0.8, carboidrato: 8.2, gordura: 0.2, ehProteina: false, ehCarboidrato: true, ehGordura: false }, 
+			
+			abacaxi_100g: { nome: 'Abacaxi', proteina: 0.5, carboidrato: 13.1, gordura: 0.1, ehProteina: false, ehCarboidrato: true, ehGordura: false }, // Assumindo 100g
+
+			brocolis: { nome: 'Brócolis', proteina: 2.4, carboidrato: 7.2, gordura: 0.4, ehProteina: false, ehCarboidrato: true, ehGordura: false },
+
+			cenoura: { nome: 'Cenoura', proteina: 0.8, carboidrato: 8.2, gordura: 0.2, ehProteina: false, ehCarboidrato: true, ehGordura: false },
+
+			macarrao_branco: { nome: 'Macarrão Branco', proteina: 5.8, carboidrato: 30.9, gordura: 0.9, ehProteina: false, ehCarboidrato: true, ehGordura: false },
+
+			abobora_cabotia: { nome: 'Abóbora Cabotia', proteina: 1.1, carboidrato: 8.7, gordura: 0.1, ehProteina: false, ehCarboidrato: true, ehGordura: false },
+
+			abobrinha_italiana: { nome: 'Abobrinha Italiana', proteina: 1.1, carboidrato: 3.6, gordura: 0.2, ehProteina: false, ehCarboidrato: true, ehGordura: false },
+
+			batata_inglesa_100g: { nome: 'Batata Inglesa', proteina: 1.9, carboidrato: 20.0, gordura: 0.1, ehProteina: false, ehCarboidrato: true, ehGordura: false }, // Assumindo 100g
+
+			manga: { nome: 'Manga (polpa)', proteina: 0.8, carboidrato: 15, gordura: 0.4, ehProteina: false, ehCarboidrato: true, ehGordura: false },
+
+			caqui: { nome: 'Caqui', proteina: 0.6, carboidrato: 19, gordura: 0.2, ehProteina: false, ehCarboidrato: true, ehGordura: false },
+
+			batata_baroa: { nome: 'Batata Baroa (Mandioquinha)', proteina: 1.0, carboidrato: 25, gordura: 0.2, ehProteina: false, ehCarboidrato: true, ehGordura: false },
+
+			couve_flor: { nome: 'Couve-flor', proteina: 1.8, carboidrato: 4, gordura: 0.5, ehProteina: false, ehCarboidrato: true, ehGordura: false },
+
+			cara: { nome: 'Cará', proteina: 1.5, carboidrato: 27, gordura: 0.1, ehProteina: false, ehCarboidrato: true, ehGordura: false },
+
+			//GORDURA
+			azeite_oliva: { nome: 'Azeite de Oliva Extravirgem', proteina: 0, carboidrato: 0, gordura: 100, ehProteina: false, ehCarboidrato: false, ehGordura: true },
+
+			abacate_polpa: { nome: 'Abacate', proteina: 2, carboidrato: 9, gordura: 15, ehProteina: false, ehCarboidrato: false, ehGordura: true }, 
+			// Primariamente Gordura
+			pasta_amendoim: { nome: 'Pasta de Amendoim Integral', proteina: 25, carboidrato: 20, gordura: 50, ehProteina: false, ehCarboidrato: false, ehGordura: true }, // Primariamente Gordura, com bom aporte de proteína
+
+			coco_polpa_100g: { nome: 'Coco', proteina: 3.3, carboidrato: 15.2, gordura: 33.5, ehProteina: false, ehCarboidrato: false, ehGordura: true }, // Assumindo 100g, primariamente Gordura
+
+			mix_oleaginosas_100g: { nome: 'Mix de Oleaginosas', proteina: 18.0, carboidrato: 20.0, gordura: 55.0, ehProteina: false, ehCarboidrato: false, ehGordura: true }, // Assumindo 100g, primariamente Gordura
+			
+			// --- VERSÃO ATUALIZADA POR 100g ---
+			castanha_do_para: { nome: 'Castanha-do-Pará', proteina: 14.3, carboidrato: 12.3, gordura: 66.3, ehProteina: false, ehCarboidrato: false, ehGordura: true },
+
+			gema_ovo: { nome: 'Gema de Ovo', proteina: 16, carboidrato: 3.6, gordura: 27, ehProteina: false, ehCarboidrato: false, ehGordura: true },
+
+			amendoas: { nome: 'Amêndoas', proteina: 21.2, carboidrato: 21.6, gordura: 49.4, ehProteina: false, ehCarboidrato: false, ehGordura: true },
+				
+			nozes: { nome: 'Nozes', proteina: 15.2, carboidrato: 13.7, gordura: 65.2, ehProteina: false, ehCarboidrato: false, ehGordura: true },
+
+			oleo_linhaca_colher: { nome: 'Óleo de Linhaça (colher sopa)', proteina: 0.0, carboidrato: 0.0, gordura: 14.0, porUnidade: true, ehProteina: false, ehCarboidrato: false, ehGordura: true }
+
+		};
+
+		// Variáveis globais 
+		let metaProteinaRefeicaoGlobal = 0;
+		let metaCarboidratoRefeicaoGlobal = 0;
+		let metaGorduraRefeicaoGlobal = 0;
+		const nomePDF = document.getElementById('nomeDieta');
+
+
+		function gerarOpcoes() {
+			
+			
+			const caloriasTotais = parseFloat(document.getElementById('calorias').value) || 0;
+			const proteinaPercent = (parseFloat(document.getElementById('proteina-percent').value) || 0) / 100;
+			const carboidratoPercent = (parseFloat(document.getElementById('carboidrato-percent').value) || 0) / 100;
+			const gorduraPercent = (parseFloat(document.getElementById('gordura-percent').value) || 0) / 100;
+			
+			const numRefeicoesProteina = parseInt(document.getElementById('refeicoes-proteina').value) || 1;
+			const numRefeicoesCarboidrato = parseInt(document.getElementById('refeicoes-carboidrato').value) || 1;
+			const numRefeicoesGordura = parseInt(document.getElementById('refeicoes-gordura').value) || 1;
+
+			// Validações 
+			if (caloriasTotais <= 0 || numRefeicoesProteina <= 0 || numRefeicoesCarboidrato <= 0 || numRefeicoesGordura <= 0) {
+				alert("Por favor, insira valores válidos para calorias e número de refeições para cada macronutriente.");
+				return;
+			}
+			const somaPercentuais = proteinaPercent + carboidratoPercent + gorduraPercent;
+			if (somaPercentuais < 0.99 || somaPercentuais > 1.01) { 
+				alert("A soma dos percentuais de proteína, carboidrato e gordura deve ser próxima de 100%.");
+				return;
+			}
+			
+			// Calcular metas totais diárias
+			const proteinaTotalG = (caloriasTotais * proteinaPercent) / 4;
+			const carboidratoTotalG = (caloriasTotais * carboidratoPercent) / 4;
+			const gorduraTotalG = (caloriasTotais * gorduraPercent) / 9;
+
+			// Calcular e armazenar metas por refeição globalmente
+			metaProteinaRefeicaoGlobal = proteinaTotalG / numRefeicoesProteina;
+			metaCarboidratoRefeicaoGlobal = carboidratoTotalG / numRefeicoesCarboidrato;
+			metaGorduraRefeicaoGlobal = gorduraTotalG / numRefeicoesGordura;
+			
+			// Obter elementos do DOM para os cards de opções
+			const divProteina = document.getElementById('opcoes-proteina');
+			const divCarboidrato = document.getElementById('opcoes-carboidrato');
+			const divGordura = document.getElementById('opcoes-gordura');
+
+			// Limpar e preencher cabeçalhos dos cards
+			divProteina.innerHTML = `<h4>Opções de Proteína</h4><span class="meta-refeicao-info">Meta: ${metaProteinaRefeicaoGlobal.toFixed(1)}g por refeição  Quantidade de refeições: ${numRefeicoesProteina}</span>`;
+			divCarboidrato.innerHTML = `<h4>Opções de Carboidrato</h4><span class="meta-refeicao-info">Meta: ${metaCarboidratoRefeicaoGlobal.toFixed(1)}g por refeição  Quantidade de refeições: ${numRefeicoesCarboidrato}</span>`;
+			divGordura.innerHTML = `<h4>Opções de Gordura</h4><span class="meta-refeicao-info">Meta: ${metaGorduraRefeicaoGlobal.toFixed(1)}g por refeição  Quantidade de refeições: ${numRefeicoesGordura}</span>`;
+
+			// Iterar sobre o banco de dados de alimentos e popular os cards
+			for (const idAlimento in alimentosDB) {
+				const alimento = alimentosDB[idAlimento];
+				let porcaoNecessaria;
+				let unidade;
+				let htmlItem = '';
+
+				// Lógica para Proteína
+				if (alimento.ehProteina && alimento.proteina > 0) { 
+					if (alimento.porUnidade) {
+						porcaoNecessaria = metaProteinaRefeicaoGlobal / alimento.proteina;
+						unidade = porcaoNecessaria !== 1 ? 'unidades' : 'unidade'; 
+					} else {
+						porcaoNecessaria = (metaProteinaRefeicaoGlobal / alimento.proteina) * 100;
+						unidade = 'g';
+					}
+					if (porcaoNecessaria > 0) {
+						htmlItem = `<div class="alimento-item" data-nome="${alimento.nome}" data-porcao="${porcaoNecessaria.toFixed(1)} ${unidade}">${alimento.nome}: <strong>${porcaoNecessaria.toFixed(1)} ${unidade}</strong></div>`;
+						divProteina.innerHTML += htmlItem;
+					}
+				}
+				
+				// Lógica para Carboidrato
+				if (alimento.ehCarboidrato && alimento.carboidrato > 0) {
+					if (alimento.porUnidade) {
+						porcaoNecessaria = metaCarboidratoRefeicaoGlobal / alimento.carboidrato;
+						unidade = porcaoNecessaria !== 1 ? 'unidades' : 'unidade';
+					} else {
+						porcaoNecessaria = (metaCarboidratoRefeicaoGlobal / alimento.carboidrato) * 100;
+						unidade = 'g';
+					}
+					if (porcaoNecessaria > 0) {
+						htmlItem = `<div class="alimento-item" data-nome="${alimento.nome}" data-porcao="${porcaoNecessaria.toFixed(1)} ${unidade}">${alimento.nome}: <strong>${porcaoNecessaria.toFixed(1)} ${unidade}</strong></div>`;
+						divCarboidrato.innerHTML += htmlItem;
+					}
+				}
+				
+				// Lógica para Gordura
+				if (alimento.ehGordura && alimento.gordura > 0) {
+					if (alimento.porUnidade) {
+						porcaoNecessaria = metaGorduraRefeicaoGlobal / alimento.gordura;
+						unidade = porcaoNecessaria !== 1 ? 'unidades' : 'unidade';
+					} else {
+						porcaoNecessaria = (metaGorduraRefeicaoGlobal / alimento.gordura) * 100;
+						unidade = 'g';
+					}
+					if (porcaoNecessaria > 0) {
+						htmlItem = `<div class="alimento-item" data-nome="${alimento.nome}" data-porcao="${porcaoNecessaria.toFixed(1)} ${unidade}">${alimento.nome}: <strong>${porcaoNecessaria.toFixed(1)} ${unidade}</strong></div>`;
+						divGordura.innerHTML += htmlItem;
+					}
+				}
+			}
+			
+			document.getElementById('resultado-opcoes').style.display = 'block';
+		}
+
+		/**
+		 * gerar e baixar .pdf
+		 */
+		async function baixarResultadosPDF() {
+			const secaoResultados = document.getElementById('resultado-opcoes');
+			if (window.getComputedStyle(secaoResultados).display === 'none') {
+				alert("Primeiro calcule as opções para poder baixá-las.");
+				return;
+			}
+
+			
+			const loadingOverlay = document.getElementById('loading-pdf');
+			loadingOverlay.style.display = 'flex';
+
+			
+			const { jsPDF } = window.jspdf;
+
+			
+			const elementoParaCapturar = document.getElementById('opcoes-container-capture');
+			
+			try {
+				
+				const canvas = await html2canvas(elementoParaCapturar, {
+					scale: 2, 
+					useCORS: true // Se houver imagens externas
+				});
+				
+				const imgData = canvas.toDataURL('image/png'); // Converte o canvas para uma imagem base64
+
+				
+				// 'p' para portrait (retrato), 'mm' para milímetros, 'a4' para tamanho da página
+				const pdf = new jsPDF('p', 'mm', 'a4');
+				
+				const pdfWidth = pdf.internal.pageSize.getWidth();
+				const pdfHeight = pdf.internal.pageSize.getHeight();
+
+				// Calcular as dimensões da imagem no PDF mantendo a proporção
+				const imgProps = pdf.getImageProperties(imgData);
+				const aspectRatio = imgProps.width / imgProps.height;
+				
+				let imgWidth = pdfWidth - 20; 
+				let imgHeight = imgWidth / aspectRatio;
+
+				
+				if (imgHeight > pdfHeight - 20) {
+					imgHeight = pdfHeight - 20; 
+					imgWidth = imgHeight * aspectRatio;
+				}
+				
+				// Calcular posição para centralizar a imagem
+				const x = (pdfWidth - imgWidth) / 2;
+				const y = 10; // Margem superior de 10mm
+
+				
+				pdf.setFontSize(18);
+				pdf.text("Opções de Alimentos por Macronutriente", pdfWidth / 2, y, { align: "center" });
+				pdf.addImage(imgData, 'PNG', x, y + 10, imgWidth, imgHeight); 
+				
+				pdf.save(`${nomePDF.value}.pdf`);
+
+			} catch (error) {
+				console.error("Erro ao gerar o PDF:", error);
+				alert("Ocorreu um erro ao gerar o PDF. Verifique a consola para mais detalhes.");
+			} finally {
+				loadingOverlay.style.display = 'none';
+			}
+		}
+
+	</script>
+</body>
+</html>
